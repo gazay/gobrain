@@ -7,7 +7,6 @@ Preved = {
 
     // Send message from user
     message: function(text) {
-        Preved.ui.message(Preved.me, text);
         Preved.send("POST", { message: text });
     },
     
@@ -33,10 +32,6 @@ Preved = {
     server: {
         // On data from server
         receive: function(data) {
-            if (data.user && Preved.me == data.user) {
-                // Event already displayed on user input
-                return;
-            }
             var func = Preved.server[data.command];
             if ("function" == typeof func) {
                 func(data);
