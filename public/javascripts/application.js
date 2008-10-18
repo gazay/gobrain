@@ -36,91 +36,102 @@ Chat = {
         }
         return $('#messages li .author:last').hasClass('user' + id)
     },
-    add: function(message, type){
-        return $('<li/>').text(message).addClass(type)
-    },
-    sys: function(message, type){
-        var msg = this.add(message, 'system ' + type)
-        msg.appendTo('#messages')
-    },
-    write: function(user, message){
-        var message = this.add(message)
-        if (!Chat.isLast(user)) {
-            $('<span/>').addClass('author user' + user).text(
-                    User.name(user)+': ').prependTo(message)
+    add: function(text, type) {
+        var message = $('<li/>').text(text)
+        if ('function' == typeof type) {
+            type(message)
+        } else if ('string' == typeof type) {
+            message.addClass(type)
         }
-        if (Preved.me == user) message.addClass('mine')
-        message.appendTo('#messages')
+        message.appendTo('#messages').hide().fadeIn(250)
+    },
+    sys: function(text, type) {
+        this.add(text, 'system ' + type)
+    },
+    write: function(user, text) {
+        this.add(text, function(message) {
+            if (!Chat.isLast(user)) {
+                $('<span/>').addClass('author user' + user).text(
+                        User.name(user)+': ').prependTo(message)
+            }
+            if (Preved.me == user) message.addClass('mine')
+        })
     }
 }
 
 Preved = {
-      me: $.cookie('user'),
-      muted: function() {
-          if ($.cookie('muted')) {
-              Preved.mute()
-              return true
-          } else {
-              Preved.unmute()
-              return false
+    me: $.cookie('user'),
+    muted: function() {
+        if ($.cookie('muted')) {
+            Preved.mute()
+            return true
+        } else {
+            Preved.unmute()
+            return false
+        }
+    },
+    message: function(text) {
+        this.send('POST', { message: text })
+    },
+    theme: function(name) {
+        this.send('PUT', { theme: name })
+    },
+    user: function(name){
+        this.send('PUT', name)
+    },
+    send: function(method, data) {
+          if (!data) data = {}
+          if ('DELETE' == method || 'PUT' == method) {
+              data['_method'] = method
+              method = 'POST'
           }
-      },
-      message: function(text) {
-          this.send('POST', { message: text })
-      },
-      theme: function(name){
-          this.send('PUT', { theme: name })
-      },
-      user: function(name){
-          this.send('PUT', name)
-      },
-      send: function(method, data){
-            if (!data) data = {}
-            if ('DELETE' == method || 'PUT' == method) {
-                data['_method'] = method
-                method = 'POST'
+          $.ajax({
+              type: method,
+              data: data
+          })
+    },
+    mute: function() {
+        $('#settings .sounds').hide()
+        $('#settings .muted').show()
+        $.cookie('muted', true, { path: '/' })
+    },
+    unmute: function() {
+        $('#settings .muted').hide()
+        $('#settings .sounds').show()
+        $.cookie('muted', null, { path: '/' })
+    },
+    server: {
+        receive: function(data) { this[data.command](data) },
+        connect: function(params) {
+            User.add(params.user, params.name)
+            Chat.sys(params.name + ' logged in.', 'in')
+            if (params.user != Preved.me) {
+                Preved.play('/sounds/connect.mp3')
             }
-            $.ajax({
-                type: method,
-                data: data
-            })
-      },
-      mute: function() {
-          $('#settings .sounds').hide()
-          $('#settings .muted').show()
-          $.cookie('muted', true, { path: '/' })
-      },
-      unmute: function() {
-          $('#settings .muted').hide()
-          $('#settings .sounds').show()
-          $.cookie('muted', null, { path: '/' })
-      },
-      server: {
-          receive: function(data){ this[data.command](data) },
-          connect: function(params){
-              User.add(params.user, params.name)
-              Chat.sys(params.name + ' logged in.', 'in')
-              if (params.user != Preved.me) {
-                  Preved.play('/sounds/connect.mp3')
-              }
-          },
-          disconnect: function(params){
-              Chat.sys(User.name(params.user) + ' logged out.')
-              User.remove(params.user, 'out')
-              if (params.user != Preved.me) {
-                  Preved.play('/sounds/disconnect.mp3')
-              }
-          },
-          message: function(params){
-              Chat.write(params.user, params.text)
-              if (params.user != Preved.me) {
-                  Preved.play('/sounds/message.mp3')
-              }
-          },
-          user: function(params){
-              User.rename(params.user, params.name)
-          }
-      }
+        },
+        disconnect: function(params){
+            Chat.sys(User.name(params.user) + ' logged out.')
+            User.remove(params.user, 'out')
+            if (params.user != Preved.me) {
+                Preved.play('/sounds/disconnect.mp3')
+            }
+        },
+        message: function(params){
+            Chat.write(params.user, params.text)
+            if (params.user != Preved.me) {
+                Preved.play('/sounds/message.mp3')
+            }
+        },
+        user: function(params){
+            User.rename(params.user, params.name)
+        }
+    }
+}
+
+Styles = {
+    run: function() {
+        //TODO for dynamic styles
+    }
 }
  
 Juggernaut.fn.receiveData = function(e) {
@@ -173,6 +184,10 @@ $(document).ready(function() {
         return false
     })
     
+    $('#settings select').change(function() {
+        Preved.theme(this.options[this.selectedIndex].value.toLowerCase())
+    })
+    
     $('<div />').attr('id', 'sound').appendTo('body')
     swfobject.embedSWF('/sounds/player.swf', 'sound',
         '0', '0', '8.0.0', '/juggernaut/expressinstall.swf',
@@ -186,4 +201,7 @@ $(document).ready(function() {
         player.SetVariable('method:setUrl', url);
         player.SetVariable('method:play', '')
     }
+    
+    Styles.run()
+    $(window).resize(Styles.run)
 })
