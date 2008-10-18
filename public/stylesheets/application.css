@@ -19,12 +19,12 @@ li {
     #messages {
         position: absolute;
         width: 30em;
-        border-bottom: 1px solid #ccc;
+        border-bottom: 1px solid #efefef;
         overflow: auto;
         }
         #messages li {
             background-color: white;
-            border-top: 1px solid #ccc;
+            border-top: 1px solid #efefef;
         }
         #messages li.mine {
             background-color: #ffc;
@@ -68,6 +68,30 @@ li {
     padding-left: 44em;
     margin: 1ex auto 0 auto;
     }
+    #settings {
+        background: black;
+        color: white;
+        padding: 4px 7px 4px 0.7em;
+        margin-bottom: 1px;
+        text-align: right;
+        }
+        #settings a {
+            float: left;
+            display: block;
+            width: 20px;
+            height: 100%;
+            overflow: hidden;
+            text-decoration: none;
+            }
+            #settings a span {
+                visibility: hidden;
+            }
+        #settings a.mute {
+            background: url(../images/mute.png) no-repeat 0 90%;
+        }
+        #settings a.sounds {
+            background: url(../images/sounds.png) no-repeat 0 90%;
+        }
     #about {
         padding: 5px;
         background-color: #ffc;

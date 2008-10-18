@@ -7,6 +7,17 @@
     %p
       New line: Ctrl+Enter
 #panel
+  #settings
+    %a.sounds{ :title => 'Turn sounds off', :href => '#' }
+      %span Sounds
+    %a.mute{ :title => 'Turn sounds on', :href => '#', :style => 'display: none'}
+      %span Mute
+    Theme:
+    %select
+      %option{ :selected => 'selected' }
+        Sky
+      %option
+        Road
   #about
     = "Your friends can chat with you now by going to <a href='http://#{request.domain + request.path}'>#{request.domain + request.path}</a>."
   %ul#users
