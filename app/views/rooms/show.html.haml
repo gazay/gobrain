@@ -1,9 +1,10 @@
-%ul#users
-  - User.inside(@room).each do |user|
-    %li{:id => "user-#{user.id}"}
-      = user.name
-
-#chat
-- form_for @room do |f|
-  = text_field_tag :message
-  = submit_tag 'Add'
+#center
+  #messages
+    %ol
+      %li= "#{@user.name} connected"
+  %form{ :method => "post", :action => "" }
+#panel
+  #about
+  %ul#users
+    %li{:id => "user-#{@user.id}"}
+      = @user.name
