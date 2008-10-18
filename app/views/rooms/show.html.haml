@@ -7,12 +7,9 @@
     %input{ :type => 'submit', :value => 'Send ↑' }
     %p
       New line: Ctrl + Enter
-    %p
-      Italic: _<em>italic</em>_
-    %p
-      Bold: *<strong>bold</strong>*
 #panel
   #about
+    = "Your friends can chat with you now by going to <a href='http://#{request.domain + request.path}'>#{request.domain + request.path}</a>."
   %ul#users
     - User.inside(@room).each do |user|
       - if @user.id == user.id

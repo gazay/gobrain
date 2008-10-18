@@ -3,3 +3,39 @@
     padding: 0;
     font-family: "Trebuchet MS", Verdana, sans-serif;
 }
+li {
+	  list-style: none;
+	  display: block;
+}
+#center {
+    width: 30em;
+    margin: 0 auto;
+    }
+    #messages {
+        position: absolute;
+        top: 0;
+    }
+    #new {
+        position: absolute;
+        bottom: 4px;
+    }
+#panel {
+    width: 12em;
+    padding-left: 44em;
+    margin: 1ex auto 0 auto;
+    }
+    #about {
+        padding: 5px;
+        background-color: #ffc;
+        border: 2px solid black;
+    }
+    #users {
+        margin-top: 1px;
+        width: 12em;
+        }
+        #users li {
+            padding: 5px;
+            background-color: black;
+            color: white;
+            margin-bottom: 1px;
+        }
