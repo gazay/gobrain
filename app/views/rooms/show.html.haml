@@ -6,6 +6,5 @@
 #chat
 %form#send-message{ :method => 'post' }
   = hidden_field_tag 'authenticity_token', form_authenticity_token
-  = hidden_field_tag '_method', 'put'
   = text_field_tag 'message'
   = submit_tag 'Add'
