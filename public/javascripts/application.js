@@ -1,33 +1,11 @@
-function update_chat(message){
-	$('<div/>').appendTo('#chat').text(message)
-};
-
-function add_user(id, name){
-	if (!$('#user-' + id).length) {
-		$('<li/>').appendTo('#users').text(name).attr('id', 'user-' + id)
-	}
-};
-
-function remove_user(id){
-	if ($.cookie('user') != String(id)) {
-		var name = $('#user-'+id).text();
-		$('#user-'+id).remove();
-		update_chat(name + ' logged out')		
-	}
-};
-
-$(function(){
-	$('.edit_room').ajaxForm()
-});
-
 Preved = {
     users: {},
     
     me: null,
 
-    // Send message
+    // Send message from user
     message: function(text) {
-        Preved.ui.message(Preved.users[Preved.me].name, text);
+        Preved.ui.message(Preved.my.name, text);
         //TODO send
     },
     
@@ -38,11 +16,17 @@ Preved = {
     
     // Change user info
     user: function(name, avatar) {
-        Preved.ui.updateUser(Preved.me, name, avatar);
+        Preved.users[Preved.my.id].name = name;
+        Preved.users[Preved.my.id].avatar = avatar;
+        Preved.ui.updateUser(Preved.my.id, name, avatar);
         $.cookie("name", name);
         $.cookie("avatar", avatar);
         //TODO send
     },
+    
+    escape: function(html) {
+        return html.replace(/&/, "&amp;").replace(/</, "&lt;");
+    }
     
     server: {
         // On data from server
@@ -55,30 +39,29 @@ Preved = {
         
         // on new user connect
         connect: function(params) {
+            Preved.ui.addUser(params.id, params.name, params.avatar);
             Preved.users[params.id] = {
                 name: params.name,
                 avatar: params.avatar
             };
-            Preved.ui.addUser(params.id, params.name, params.avatar);
         },
         
         // on user disconnect
         disconnect: function(params) {
-            delete Preved.users[params.id];
             Preved.ui.removeUser(params.id);
+            delete Preved.users[params.id];
         },
         
         // on new message
         message: function(params) {
-            var author = Preved.users[params.from].name;
-            Preved.ui.message(author, params.text);
+            Preved.ui.message(params.from, params.text);
         },
         
         // on user info update
         user: function(params) {
+            Preved.ui.updateUser(params.id, params.name, params.avatar);
             Preved.users[params.id].name = params.name;
             Preved.users[params.id].avatar = params.avatar;
-            Preved.ui.updateUser(params.id, params.name, params.avatar);
         }
     },
     
@@ -86,19 +69,42 @@ Preved = {
         lastAuthor: null,
     
         message: function(author, text) {
-            //TODO
+            if (Preved.ui.lastAuthor != author) {
+                var name = Preved.escape(Preved.users[author].name);
+                text = '<span class="author">' + name + '</span>';
+                Preved.ui.lastAuthor = author;
+            }
+            var cls = (Preved.me == author) ? ' class="mine"' : ''
+            $('#messages ol').append(
+                '<li' + cls + '>' + Preved.escape(text) + "</li>");
+        },
+        
+        sysMessage: function(text, type) {
+            if (type) {
+                type = "system " + Preved.escape(type);
+            } else {
+                type = "system";
+            }
+            $('#messages ol').append(
+                '<li class="' + type + '">' + Preved.escape(text) + '</li>');
         },
         
         addUser: function(id, name, avatar) {
-            //TODO
+            id = Preved.escape(id);
+            $("#users").append(
+                '<li id="user-' + id + '">' + Preved.escape(name) + '</li>');
+            Preved.ui.sysMessage(name + " logged in", "in");
         },
         
         updateUser: function(id, name, avatar) {
-            //TODO
+            $("#user-" + id).text(name);
         },
         
         removeUser: function(id) {
-            //TODO
+            id = Preved.escape(id);
+            var name = Preved.escape(Preved.users[id].name);
+            $("#user-" + id).remove();
+            Preved.ui.sysMessage(name + " logged out", "out");
         }
     }
 }
@@ -108,20 +114,19 @@ Juggernaut.fn.receiveData = function(e) {
     this.currentMsgId = msg.id;
     this.currentSignature = msg.signature;
     this.logger("Received data:\n" + msg.body + "\n");
-    //TODO delete after remove all prototype code
-    if ("object" == msg.body) {
-        Preved.server.receive(msg.body);
-    } else {
-        eval(msg.body);
-    }
+    Preved.server.receive(msg.body);
 }
 
+$(document).ready(function() {
+    
+});
+
 $(window).unload(function(){
-	$.ajax({
-		type: 'POST',
-		data: {
-			authenticity_token: window.token,
-			_method: 'delete',
-		}
-	})
+	  $.ajax({
+		    type: 'POST',
+		    data: {
+			      authenticity_token: window.token,
+			      _method: 'delete',
+		    }
+	  })
 });
