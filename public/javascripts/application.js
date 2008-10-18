@@ -1,178 +1,132 @@
-Preved = {
-    // Avaiable users list
-    users: {},
-    
-    // Current user ID
-    me: null,
-
-    // Send message from user
-    message: function(text) {
-        Preved.send("POST", { message: text });
+User = {
+    el: function(id) {
+        return $('#user' + id)
     },
-    
-    // Change theme
-    theme: function(name) {
-        //TODO
-        Preved.send("PUT", { theme: name })
+    count: function(id) {
+        return User.el(id).data('count')
     },
-    
-    // Change user info
-    user: function(name, avatar) {
-        Preved.users[Preved.me].name = name;
-        Preved.users[Preved.me].avatar = avatar;
-        Preved.ui.updateUser(Preved.me, name, avatar);
-        Preved.send("PUT", Preved.users[Preved.me]);
-    },
-    
-    // Escape HTML tags and entries
-    escape: function(html) {
-        return html.replace(/&/, "&amp;").replace(/</, "&lt;");
-    },
-    
-    server: {
-        // On data from server
-        receive: function(data) {
-            var func = Preved.server[data.command];
-            if ("function" == typeof func) {
-                func(data);
-            }
-        },
-        
-        // on new user connect
-        connect: function(params) {
-            Preved.ui.addUser(params.user, params.name, params.avatar);
-            Preved.users[params.user] = {
-                name: params.name,
-                avatar: params.avatar
-            };
-        },
-        
-        // on user disconnect
-        disconnect: function(params) {
-            Preved.ui.removeUser(params.user);
-            delete Preved.users[params.user];
-        },
-        
-        // on new message
-        message: function(params) {
-            Preved.ui.message(params.user, params.text);
-        },
-        
-        // on user info update
-        user: function(params) {
-            Preved.ui.updateUser(params.user, params.name, params.avatar);
-            Preved.users[params.user].name = params.name;
-            Preved.users[params.user].avatar = params.avatar;
+    add: function(id, name){
+        if (!User.el(id).length) {
+            $('<li/>').attr('id', "user" + id).text(name).appendTo('#users')
+            User.el(id).data('count', 0)
         }
+        user = User.el(id).data('count', User.count(id) + 1)
     },
-    
-    send: function(method, data) {
-        if (!data) data = {}
-        if ('DELETE' == method || 'PUT' == method) {
-            data['_method'] = method;
-            method = 'POST'
-        }
-        data.authenticity_token = window.token;
-        $.ajax({
-            type: method,
-            cache: false,
-            data: data
-        });
+    remove: function(id){
+        User.el(id).data('count', User.count(id) - 1)
+        if (User.cound(id) <= 0) User.el(id).remove()
     },
-    
-    ui: {
-        lastAuthor: null,
-    
-        message: function(author, text) {
-            text = Preved.escape(text);
-            if (Preved.ui.lastAuthor != author) {
-                var name = Preved.escape(Preved.users[author].name);
-                text = '<span class="author">' + name + ':</span>' + text;
-                Preved.ui.lastAuthor = author;
-            }
-            var cls = (Preved.me == author) ? ' class="mine"' : ''
-            $('#messages ol').append('<li' + cls + '>' + text + '</li>');
-        },
-        
-        sysMessage: function(text, type) {
-            if (type) {
-                type = "system " + Preved.escape(type);
-            } else {
-                type = "system";
-            }
-            $('#messages ol').append(
-                '<li class="' + type + '">' + Preved.escape(text) + '</li>');
-        },
-        
-        addUser: function(id, name, avatar) {
-            id = Number(1);
-            $("#users").append(
-                '<li id="user-' + id + '">' + Preved.escape(name) + '</li>');
-            Preved.ui.sysMessage(name + " logged in", "in");
-        },
-        
-        updateUser: function(id, name, avatar) {
-            $("#user-" + id).text(name);
-        },
-        
-        removeUser: function(id) {
-            id = Number(1);
-            var name = Preved.escape(Preved.users[id].name);
-            $("#user-" + id).remove();
-            Preved.ui.sysMessage(name + " logged out", "out");
-        }
+    rename: function(id, name){
+        User.el(id).text(name)
+    },
+    name: function(id){
+        return User.el(id).text()
     }
 }
-
+ 
+Chat = {
+    isLast: function(id) {
+        if ($('#messages li:last').hasClass('system')) {
+            return false;
+        }
+        return $('#messages li .author:last').hasClass('user' + id)
+    },
+    add: function(message, type){
+        return $('<li/>').text(message).addClass(type)
+    },
+    sys: function(message, type){
+        var msg = this.add(message, 'system ' + type)
+        msg.appendTo('#messages')
+    },
+    write: function(user, message){
+        var message = this.add(message)
+        if (!Chat.isLast(user)) {
+            $('<span/>').addClass('author user' + user).text(
+                    User.name(user)+': ').prependTo(message)
+        }
+        message.appendTo('#messages')
+    }
+}
+ 
+Preved = {
+      me: $.cookie('user'),
+      message: function(text) {
+          this.send("POST", { message: text })
+      },
+      theme: function(name){
+          this.send("PUT", { theme: name })
+      },
+      user: function(name){
+          this.send("PUT", name)
+      },
+      send: function(method, data){
+            if (!data) data = {}
+            if ('DELETE' == method || 'PUT' == method) {
+                data['_method'] = method
+                method = 'POST'
+            }
+            data.authenticity_token = window.token
+            $.ajax({
+                type: method,
+                data: data
+            })
+      },
+      server: {
+          receive: function(data){ this[data.command](data) },
+          connect: function(params){
+              User.add(params.user, params.name)
+              Chat.sys(params.name + ' logged in.', 'in')
+          },
+          disconnect: function(params){
+              Chat.sys(User.name(params.user) + ' logged out.')
+              User.remove(params.user, 'out')
+          },
+          message: function(params){
+              Chat.write(params.user, params.text)
+          },
+          user: function(params){
+              User.rename(params.user, params.name)
+          }
+      },
+}
+ 
 Juggernaut.fn.receiveData = function(e) {
-    var msg = Juggernaut.parseJSON(unescape(e.toString()));
-    this.currentMsgId = msg.id;
-    this.currentSignature = msg.signature;
-    this.logger("Received data:\n" + msg.body + "\n");
-    Preved.server.receive(Juggernaut.parseJSON(msg.body));
+    var msg = Juggernaut.parseJSON(unescape(e.toString()))
+    this.currentMsgId = msg.id
+    this.currentSignature = msg.signature
+    this.logger("Received data:\n" + msg.body + "\n")
+    Preved.server.receive(Juggernaut.parseJSON(msg.body))
 }
 
+Juggernaut.fn.logger = function(msg) { //DEBUG
+    if (this.options.debug && this.hasLogger) {
+        console.log("Juggernaut: " + msg + " on " + this.options.host + ':' + this.options.port)
+    }
+}
+ 
 $(document).ready(function() {
-    // Get data
-    $('#users li').each(function() {
-        var id = this.id.slice(5);
-        var name = $.trim($(this).text());
-        Preved.users[id] = {
-            name: name,
-            avatar: null
-        };
-        if ('me' == this.className) {
-            Preved.me = id;
-        }
-    });
-    
-    // Bind events
+    $('#users > li').data('count', 0)
     $('#new textarea').keypress(function(e) {
-        // Safari sends ASCII 3 on Enter
+      // Safari sends ASCII 3 on Enter
         if (13 == e.keyCode || 3 == e.keyCode) {
             if (e.ctrlKey || e.metaKey) {
                 //TODO
             } else {
-                $('#new').submit();
+                $('#new').submit()
             }
         }
     })
     $('#new textarea').keyup(function(e) {
         if (13 == e.keyCode || 3 == e.keyCode) {
-            $('#new textarea').val('');
+            $('#new textarea').val('')
         }
-    });
+    })
     $('#new').submit(function() {
-        var text = $('#new textarea').val();
-        if ('' == text) return false;
-        $('#new textarea').val('');
-        Preved.message(text);
-        return false;
-    });
-    
-    $('#new textarea').focus();
-});
-
-$(window).unload(function(){
-	  Preved.send('DELETE');
-});
+        var text = $('#new textarea').val()
+        if ('' == text) return false
+        $('#new textarea').val('')
+        Preved.message(text)
+        return false
+    })
+    $('#new textarea').focus()
+})

@@ -22,7 +22,6 @@ li {
         width: 35em;
         border-bottom: 1px solid #efefef;
         overflow: auto;
-        height: 100%;
         }
         #messages li {
             background-color: white;
@@ -84,15 +83,16 @@ li {
             height: 100%;
             overflow: hidden;
             text-decoration: none;
+            margin-top: 2px;
             }
             #settings a span {
                 visibility: hidden;
             }
         #settings a.mute {
-            background: url(../images/mute.png) no-repeat 0 90%;
+            background: url(../images/mute.png) no-repeat 0 100%;
         }
         #settings a.sounds {
-            background: url(../images/sounds.png) no-repeat 0 90%;
+            background: url(../images/sounds.png) no-repeat 0 100%;
         }
     #about {
         padding: 5px;
