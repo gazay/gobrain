@@ -1,4 +1,5 @@
 Preved = {
+    // Avaiable users list
     users: {},
     
     // Current user ID
@@ -6,7 +7,7 @@ Preved = {
 
     // Send message from user
     message: function(text) {
-        Preved.ui.message(Preved.my, text);
+        Preved.ui.message(Preved.me, text);
         Preved.send("POST", { message: text });
     },
     
@@ -32,8 +33,12 @@ Preved = {
     server: {
         // On data from server
         receive: function(data) {
-            var func = Preved.in[data.command];
-            if ("undefined" != data.command && "function" == func) {
+            if (data.user && Preved.me == data.user) {
+                // Event already displayed on user input
+                return;
+            }
+            var func = Preved.server[data.command];
+            if ("function" == typeof func) {
                 func(data);
             }
         },
@@ -84,14 +89,14 @@ Preved = {
         lastAuthor: null,
     
         message: function(author, text) {
+            text = Preved.escape(text);
             if (Preved.ui.lastAuthor != author) {
                 var name = Preved.escape(Preved.users[author].name);
-                text = '<span class="author">' + name + '</span>';
+                text = '<span class="author">' + name + ':</span>' + text;
                 Preved.ui.lastAuthor = author;
             }
             var cls = (Preved.me == author) ? ' class="mine"' : ''
-            $('#messages ol').append(
-                '<li' + cls + '>' + Preved.escape(text) + "</li>");
+            $('#messages ol').append('<li' + cls + '>' + text + '</li>');
         },
         
         sysMessage: function(text, type) {
@@ -129,7 +134,7 @@ Juggernaut.fn.receiveData = function(e) {
     this.currentMsgId = msg.id;
     this.currentSignature = msg.signature;
     this.logger("Received data:\n" + msg.body + "\n");
-    Preved.server.receive(msg.body);
+    Preved.server.receive(Juggernaut.parseJSON(msg.body));
 }
 
 $(document).ready(function() {
@@ -169,6 +174,8 @@ $(document).ready(function() {
         Preved.message(text);
         return false;
     });
+    
+    $('#new textarea').focus();
 });
 
 $(window).unload(function(){
