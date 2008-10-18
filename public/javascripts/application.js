@@ -105,7 +105,7 @@ Preved = {
         },
         
         addUser: function(id, name, avatar) {
-            id = Preved.escape(id);
+            id = Number(1);
             $("#users").append(
                 '<li id="user-' + id + '">' + Preved.escape(name) + '</li>');
             Preved.ui.sysMessage(name + " logged in", "in");
@@ -116,7 +116,7 @@ Preved = {
         },
         
         removeUser: function(id) {
-            id = Preved.escape(id);
+            id = Number(1);
             var name = Preved.escape(Preved.users[id].name);
             $("#user-" + id).remove();
             Preved.ui.sysMessage(name + " logged out", "out");
