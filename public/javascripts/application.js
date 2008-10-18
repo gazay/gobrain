@@ -18,7 +18,7 @@ User = {
         if (User.cound(id) <= 0) {
             User.el(id).hide(500, function() {
                 $(this).remove()
-            }
+            })
         }
     },
     rename: function(id, name){
@@ -51,6 +51,21 @@ Chat = {
         }
         if (Preved.me == user) message.addClass('mine')
         message.appendTo('#messages')
+    }
+}
+
+Sound = function(name) {
+    var mp3 = '/sounds/' + name + '.mp3'
+    $('<div />').attr('id', 'sound-' + name).appendTo('body')
+    swfobject.embedSWF('/sounds/player.swf', 'sound-' + name, 
+        '0', '0', '8.0.0', '/juggernaut/expressinstall.swf',
+        {useexternalinterface: true, enabled: true}, {AllowScriptAccess: 'always'}, {}
+    )
+    return function() {
+        if (!Preved.sounds) {
+            return false
+        }
+        $('#sound-' + name)[0].SetVariable('method:play', '')
     }
 }
  
@@ -102,11 +117,14 @@ Preved = {
           },
           message: function(params){
               Chat.write(params.user, params.text)
+              if (params.user != Preved.me) {
+                  Preved.sounds.message()
+              }
           },
           user: function(params){
               User.rename(params.user, params.name)
           }
-      },
+      }
 }
  
 Juggernaut.fn.receiveData = function(e) {
@@ -125,6 +143,7 @@ Juggernaut.fn.logger = function(msg) { //DEBUG
  
 $(document).ready(function() {
     $('#users > li').data('count', 0)
+    
     $('#new textarea').keypress(function(e) {
       // Safari sends ASCII 3 on Enter
         if (13 == e.keyCode || 3 == e.keyCode) {
@@ -147,6 +166,8 @@ $(document).ready(function() {
         Preved.message(text)
         return false
     })
+    $('#new textarea').focus()
+    
     $('#settings a.unmute').click(function() {
         Preved.unmute()
         return false
@@ -155,5 +176,9 @@ $(document).ready(function() {
         Preved.mute()
         return false
     })
-    $('#new textarea').focus()
+    Preved.sounds = {
+          message: Sound('message'),
+          connect: Sound('connect'),
+          disconnect: Sound('disconnect')
+    }
 })
