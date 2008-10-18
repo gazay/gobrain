@@ -2,7 +2,15 @@
   #messages
     %ol
       %li= "#{@user.name} connected"
-  %form{ :method => "post", :action => "" }
+  %form{ :method => 'post', :action => '' }
+    %textarea
+    %input{ :type => 'submit', :value => 'Send ↑' }
+    %p
+      New line: Ctrl + Enter
+    %p
+      Italic: _<em>italic</em>_
+    %p
+      Bold: *<strong>bold</strong>*
 #panel
   #about
   %ul#users
