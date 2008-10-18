@@ -44,6 +44,7 @@ Chat = {
             $('<span/>').addClass('author user' + user).text(
                     User.name(user)+': ').prependTo(message)
         }
+        if (Preved.me == user) message.addClass('mine')
         message.appendTo('#messages')
     }
 }
@@ -51,13 +52,13 @@ Chat = {
 Preved = {
       me: $.cookie('user'),
       message: function(text) {
-          this.send("POST", { message: text })
+          this.send('POST', { message: text })
       },
       theme: function(name){
-          this.send("PUT", { theme: name })
+          this.send('PUT', { theme: name })
       },
       user: function(name){
-          this.send("PUT", name)
+          this.send('PUT', name)
       },
       send: function(method, data){
             if (!data) data = {}
@@ -100,7 +101,7 @@ Juggernaut.fn.receiveData = function(e) {
 
 Juggernaut.fn.logger = function(msg) { //DEBUG
     if (this.options.debug && this.hasLogger) {
-        console.log("Juggernaut: " + msg + " on " + this.options.host + ':' + this.options.port)
+        console.log('Juggernaut: ' + msg + ' on ' + this.options.host + ':' + this.options.port)
     }
 }
  
