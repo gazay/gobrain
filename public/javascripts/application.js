@@ -17,7 +17,7 @@ function remove_user(id){
 };
 
 $(function(){
-	$('.edit_room').ajaxForm()
+	$('#send-message').ajaxForm()
 });
 
 $(window).unload(function(){

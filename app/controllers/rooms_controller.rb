@@ -1,6 +1,10 @@
 class RoomsController < ApplicationController
   before_filter :find_room, :only => [:update, :destroy]
-    
+  
+  def index
+    redirect_to "/#{Faker::Internet.domain_word}"
+  end
+  
   def show
     @room = Room.find_or_create_by_permalink params[:id]
     @user = User.find_or_create_by_id cookies['user']
