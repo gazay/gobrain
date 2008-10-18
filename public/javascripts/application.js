@@ -30,33 +30,69 @@ User = {
 }
  
 Chat = {
-    maxName: 0,
+    maxName: -10,
     isLast: function(id) {
+        console.log($('#messages li'))
         if ($('#messages li:last').hasClass('system')) {
             return false;
         }
         return $('#messages .author:last').hasClass('user' + id)
     },
-    add: function(text, type) {
-        return $('<li/>').html('<p>' + text + '</p>').appendTo('#messages')
-            .css('padding-left', Chat.maxName + 10 + 'px').hide().fadeIn(200)
+    write: function(text) {
+        return $('<li />').html('<p>' + text + '</p>').appendTo('#messages')
+            .css('padding-left', Chat.maxName + 10)
+    },
+    add: function(text) {
+        return Chat.write(text).hide().fadeIn(200)
     },
     sys: function(text, type) {
         this.add(text).addClass('system ' + type)
     },
-    write: function(user, text) {
+    msg: function(user, text) {
+        var last = Chat.isLast(user)
         message = this.add(text)
         if (Preved.me == user) message.addClass('mine')
-        if (!Chat.isLast(user)) {
+        if (!last) {
             author = $('<span/>').addClass('author user' + user)
             author.text(User.name(user)).prependTo(message)
             if (Chat.maxName < author.width()) {
                 Chat.maxName = author.width()
-                $('#messages li').css('padding-left', author.width() + 10 + 'px')
-                $('#messages .author').css('width', author.width() + 'px')
+                $('#messages li').css('padding-left', author.width() + 10)
+                $('#messages .author').css('width', author.width())
             } else {
                 author.css('width', Chat.maxName)
             }
+        }
+    },
+    time: function() {
+        var time = (new Date()).toTimeString().match(/(\d\d:\d\d):/)[1]
+        Chat.write(time).addClass('time system')
+    }
+}
+
+Style = {
+    init: function() {
+        Style.run()
+        $(window).resize(Style.run)
+        Style.fontStandard = $('#about').width()
+        setInterval(Style.checkFont, 500)
+    },
+    run: function() {
+        for (rule in Style.rules) {
+            Style.rules[rule]()
+        }
+    },
+    fontStandard: null,
+    checkFont: function() {
+        if ($('#about').width() != Style.fontStandard) {
+            Style.fontStandard = $('#about').width()
+            Style.run()
+        }
+    },
+    rules: {
+        messages: function() {
+            $('#messages').css('height', 
+                $('#new').offset().top - $('#messages').offset().top)
         }
     }
 }
@@ -114,20 +150,21 @@ Preved = {
                 Preved.play('/sounds/connect.mp3')
             }
         },
-        disconnect: function(params){
+        disconnect: function(params) {
             Chat.sys(User.name(params.user) + ' logged out.')
             User.remove(params.user, 'out')
             if (params.user != Preved.me) {
                 Preved.play('/sounds/disconnect.mp3')
             }
         },
-        message: function(params){
-            Chat.write(params.user, Preved.escape(params.text))
+        message: function(params) {
+            //TODO debug in Opera
+            Chat.msg(params.user, Preved.escape(params.text))
             if (params.user != Preved.me) {
                 Preved.play('/sounds/message.mp3')
             }
         },
-        user: function(params){
+        user: function(params) {
             User.rename(params.user, Preved.escape(params.name))
         }
     }
@@ -200,4 +237,12 @@ $(document).ready(function() {
         player.SetVariable('method:setUrl', url);
         player.SetVariable('method:play', '')
     }
+    
+    setInterval(Chat.time, 5 * 60 * 1000)
+    
+    Style.init()
+})
+
+$(window).unload(function() {
+    Preved.send('DELETE') //TODO debug
 })

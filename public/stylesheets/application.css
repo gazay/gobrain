@@ -20,7 +20,6 @@ li {
     #messages {
         position: absolute;
         width: 35em;
-        border-bottom: 1px solid #efefef;
         overflow: auto;
         }
         #messages li {
@@ -45,6 +44,12 @@ li {
         #messages li.out {
             background-color: #fdd;
         }
+        #messages li.time {
+            color: gray;
+            }
+            #messages li.time p {
+                border-left: none;
+            }
     #new {
         position: absolute;
         bottom: 0;
