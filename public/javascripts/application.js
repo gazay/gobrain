@@ -1,37 +1,38 @@
 Preved = {
     users: {},
     
+    // Current user ID
     me: null,
 
     // Send message from user
     message: function(text) {
         Preved.ui.message(Preved.my.name, text);
-        //TODO send
+        Preved.send("POST", { message: text });
     },
     
-    // Change place
-    place: function(name) {
+    // Change theme
+    theme: function(name) {
         //TODO
+        Preved.send("PUT", { theme: name })
     },
     
     // Change user info
     user: function(name, avatar) {
-        Preved.users[Preved.my.id].name = name;
-        Preved.users[Preved.my.id].avatar = avatar;
-        Preved.ui.updateUser(Preved.my.id, name, avatar);
-        $.cookie("name", name);
-        $.cookie("avatar", avatar);
-        //TODO send
+        Preved.users[Preved.me].name = name;
+        Preved.users[Preved.me].avatar = avatar;
+        Preved.ui.updateUser(Preved.me, name, avatar);
+        Preved.send("PUT", Preved.users[Preved.me]);
     },
     
+    // Escape HTML tags and entries
     escape: function(html) {
         return html.replace(/&/, "&amp;").replace(/</, "&lt;");
-    }
+    },
     
     server: {
         // On data from server
         receive: function(data) {
-            var func = Preved.server[data.command];
+            var func = Preved.in[data.command];
             if ("undefined" != data.command && "function" == func) {
                 func(data);
             }
@@ -63,6 +64,21 @@ Preved = {
             Preved.users[params.id].name = params.name;
             Preved.users[params.id].avatar = params.avatar;
         }
+    },
+    
+    send: function(method, data) {
+        if (!data) data = {}
+        if ('DELETE' == method || 'PUT' == method) {
+            data['_method'] = method;
+            method = 'POST'
+        }
+        data.authenticity_token = window.token;
+        $.ajax({
+            type: method,
+            url: '',
+            cache: false,
+            data: data
+        });
     },
     
     ui: {
@@ -118,15 +134,9 @@ Juggernaut.fn.receiveData = function(e) {
 }
 
 $(document).ready(function() {
-    
+    //TODO
 });
 
 $(window).unload(function(){
-	  $.ajax({
-		    type: 'POST',
-		    data: {
-			      authenticity_token: window.token,
-			      _method: 'delete',
-		    }
-	  })
+	  Preved.send('DELETE');
 });
