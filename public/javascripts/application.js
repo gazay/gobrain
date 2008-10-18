@@ -6,7 +6,7 @@ Preved = {
 
     // Send message from user
     message: function(text) {
-        Preved.ui.message(Preved.my.name, text);
+        Preved.ui.message(Preved.my, text);
         Preved.send("POST", { message: text });
     },
     
@@ -75,7 +75,6 @@ Preved = {
         data.authenticity_token = window.token;
         $.ajax({
             type: method,
-            url: '',
             cache: false,
             data: data
         });
