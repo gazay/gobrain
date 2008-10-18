@@ -1,6 +1,8 @@
 class RoomsController < ApplicationController
   include JuggernautJSON
   
+  skip_before_filter :verify_authenticity_token
+  
   before_filter :find_room_and_user,  :only => [:destroy, :update, :create]
   before_filter :find_place,          :only => [:destroy, :update]
   before_filter :destroy_place,       :only => :destroy

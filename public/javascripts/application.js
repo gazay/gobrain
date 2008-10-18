@@ -72,7 +72,6 @@ Preved = {
                 data['_method'] = method
                 method = 'POST'
             }
-            data.authenticity_token = window.token
             $.ajax({
                 type: method,
                 data: data
