@@ -88,10 +88,10 @@ li {
             #settings a span {
                 visibility: hidden;
             }
-        #settings a.mute {
-            background: url(../images/mute.png) no-repeat 0 100%;
+        #settings a.muted {
+            background: url(../images/muted.png) no-repeat 0 100%;
         }
-        #settings a.unmute {
+        #settings a.sounds {
             background: url(../images/sounds.png) no-repeat 0 100%;
         }
     #about {

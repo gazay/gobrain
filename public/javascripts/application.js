@@ -54,24 +54,17 @@ Chat = {
     }
 }
 
-Sound = function(name) {
-    var mp3 = '/sounds/' + name + '.mp3'
-    $('<div />').attr('id', 'sound-' + name).appendTo('body')
-    swfobject.embedSWF('/sounds/player.swf', 'sound-' + name, 
-        '0', '0', '8.0.0', '/juggernaut/expressinstall.swf',
-        {useexternalinterface: true, enabled: true}, {AllowScriptAccess: 'always'}, {}
-    )
-    return function() {
-        if (!Preved.sounds) {
-            return false
-        }
-        $('#sound-' + name)[0].SetVariable('method:play', '')
-    }
-}
- 
 Preved = {
       me: $.cookie('user'),
-      sounds: $.cookie('mute') ? true : false,
+      muted: function() {
+          if ($.cookie('muted')) {
+              Preved.mute()
+              return true
+          } else {
+              Preved.unmute()
+              return false
+          }
+      },
       message: function(text) {
           this.send('POST', { message: text })
       },
@@ -94,31 +87,35 @@ Preved = {
             })
       },
       mute: function() {
-          Preved.sounds = false
-          $('#settings .mute').hide()
-          $('#settings .unmute').show()
-          $.cookie('mute', true) //TODO check to global set
+          $('#settings .sounds').hide()
+          $('#settings .muted').show()
+          $.cookie('muted', true, { path: '/' })
       },
       unmute: function() {
-          Preved.sounds = true
-          $('#settings .unmute').hide()
-          $('#settings .mute').show()
-          $.cookie('mute', false)
+          $('#settings .muted').hide()
+          $('#settings .sounds').show()
+          $.cookie('muted', null, { path: '/' })
       },
       server: {
           receive: function(data){ this[data.command](data) },
           connect: function(params){
               User.add(params.user, params.name)
               Chat.sys(params.name + ' logged in.', 'in')
+              if (params.user != Preved.me) {
+                  Preved.play('/sounds/connect.mp3')
+              }
           },
           disconnect: function(params){
               Chat.sys(User.name(params.user) + ' logged out.')
               User.remove(params.user, 'out')
+              if (params.user != Preved.me) {
+                  Preved.play('/sounds/disconnect.mp3')
+              }
           },
           message: function(params){
               Chat.write(params.user, params.text)
               if (params.user != Preved.me) {
-                  Preved.sounds.message()
+                  Preved.play('/sounds/message.mp3')
               }
           },
           user: function(params){
@@ -168,17 +165,26 @@ $(document).ready(function() {
     })
     $('#new textarea').focus()
     
-    $('#settings a.unmute').click(function() {
+    $('#settings a.muted').click(function() {
         Preved.unmute()
         return false
     })
-    $('#settings a.mute').click(function() {
+    $('#settings a.sounds').click(function() {
         Preved.mute()
         return false
     })
-    Preved.sounds = {
-          message: Sound('message'),
-          connect: Sound('connect'),
-          disconnect: Sound('disconnect')
+    
+    $('<div />').attr('id', 'sound').appendTo('body')
+    swfobject.embedSWF('/sounds/player.swf', 'sound',
+        '0', '0', '8.0.0', '/juggernaut/expressinstall.swf',
+        {useexternalinterface: true, enabled: true}, {AllowScriptAccess: 'always'}, {}
+    )
+    Preved.play = function(url) {
+        if (Preved.muted()) {
+            return false;
+        }
+        player = $('#sound')[0]
+        player.SetVariable('method:setUrl', url);
+        player.SetVariable('method:play', '')
     }
 })
