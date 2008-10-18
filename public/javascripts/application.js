@@ -30,32 +30,34 @@ User = {
 }
  
 Chat = {
+    maxName: 0,
     isLast: function(id) {
         if ($('#messages li:last').hasClass('system')) {
             return false;
         }
-        return $('#messages li .author:last').hasClass('user' + id)
+        return $('#messages .author:last').hasClass('user' + id)
     },
     add: function(text, type) {
-        var message = $('<li/>').text(text)
-        if ('function' == typeof type) {
-            type(message)
-        } else if ('string' == typeof type) {
-            message.addClass(type)
-        }
-        message.appendTo('#messages').hide().fadeIn(250)
+        return $('<li/>').html(text).appendTo('#messages')
+            .css('padding-left', Chat.maxName + 15 + 'px').hide().fadeIn(200)
     },
     sys: function(text, type) {
-        this.add(text, 'system ' + type)
+        this.add(text).addClass('system ' + type)
     },
     write: function(user, text) {
-        this.add(text, function(message) {
-            if (!Chat.isLast(user)) {
-                $('<span/>').addClass('author user' + user).text(
-                        User.name(user)+': ').prependTo(message)
+        message = this.add(text)
+        if (Preved.me == user) message.addClass('mine')
+        if (!Chat.isLast(user)) {
+            author = $('<span/>').addClass('author user' + user)
+            author.text(User.name(user)).prependTo(message)
+            if (Chat.maxName < author.width()) {
+                Chat.maxName = author.width()
+                $('#messages li').css('padding-left', author.width() + 15 + 'px')
+                $('#messages .author').css('width', author.width() + 'px')
+            } else {
+                author.css('width', Chat.maxName)
             }
-            if (Preved.me == user) message.addClass('mine')
-        })
+        }
     }
 }
 
@@ -100,11 +102,14 @@ Preved = {
         $('#settings .sounds').show()
         $.cookie('muted', null, { path: '/' })
     },
+    escape: function(html) {
+        return html.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+    },
     server: {
         receive: function(data) { this[data.command](data) },
         connect: function(params) {
-            User.add(params.user, params.name)
-            Chat.sys(params.name + ' logged in.', 'in')
+            User.add(params.user, Preved.escape(params.name))
+            Chat.sys(Preved.escape(params.name) + ' logged in.', 'in')
             if (params.user != Preved.me) {
                 Preved.play('/sounds/connect.mp3')
             }
@@ -117,20 +122,14 @@ Preved = {
             }
         },
         message: function(params){
-            Chat.write(params.user, params.text)
+            Chat.write(params.user, Preved.escape(params.text))
             if (params.user != Preved.me) {
                 Preved.play('/sounds/message.mp3')
             }
         },
         user: function(params){
-            User.rename(params.user, params.name)
+            User.rename(params.user, Preved.escape(params.name))
         }
-    }
-}
-
-Styles = {
-    run: function() {
-        //TODO for dynamic styles
     }
 }
  
@@ -201,7 +200,4 @@ $(document).ready(function() {
         player.SetVariable('method:setUrl', url);
         player.SetVariable('method:play', '')
     }
-    
-    Styles.run()
-    $(window).resize(Styles.run)
 })
