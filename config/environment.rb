@@ -4,6 +4,7 @@ require File.join(File.dirname(__FILE__), 'boot')
 
 Rails::Initializer.run do |config|
   config.gem 'factory_girl'
+  config.gem 'faker'
 
   config.time_zone = 'UTC'
 
