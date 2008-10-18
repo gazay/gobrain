@@ -6,7 +6,7 @@
     %link{ :rel => 'shortcut icon', :href => '/favicon.ico', :type => 'image/x-icon' }
     = stylesheet_link_tag 'application'
     = javascript_include_token
-    = javascript_include_tag 'jquery', 'jquery/json', 'jquery/form', 'jquery/cookie', 'juggernaut/juggernaut', 'juggernaut/jquerynaut', 'juggernaut/swfobject', 'application'
+    = javascript_include_tag 'jquery', 'jquery/json', 'jquery/cookie', 'juggernaut/juggernaut', 'juggernaut/jquerynaut', 'juggernaut/swfobject', 'application'
     = juggernaut :channels => [@room.permalink], :client_id => @user.id
   %body
     = yield
