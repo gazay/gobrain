@@ -40,8 +40,8 @@ Preved = {
         
         // on new user connect
         connect: function(params) {
-            Preved.ui.addUser(params.id, params.name, params.avatar);
-            Preved.users[params.id] = {
+            Preved.ui.addUser(params.user, params.name, params.avatar);
+            Preved.users[params.user] = {
                 name: params.name,
                 avatar: params.avatar
             };
@@ -49,20 +49,20 @@ Preved = {
         
         // on user disconnect
         disconnect: function(params) {
-            Preved.ui.removeUser(params.id);
-            delete Preved.users[params.id];
+            Preved.ui.removeUser(params.user);
+            delete Preved.users[params.user];
         },
         
         // on new message
         message: function(params) {
-            Preved.ui.message(params.from, params.text);
+            Preved.ui.message(params.user, params.text);
         },
         
         // on user info update
         user: function(params) {
-            Preved.ui.updateUser(params.id, params.name, params.avatar);
-            Preved.users[params.id].name = params.name;
-            Preved.users[params.id].avatar = params.avatar;
+            Preved.ui.updateUser(params.user, params.name, params.avatar);
+            Preved.users[params.user].name = params.name;
+            Preved.users[params.user].avatar = params.avatar;
         }
     },
     
@@ -134,7 +134,42 @@ Juggernaut.fn.receiveData = function(e) {
 }
 
 $(document).ready(function() {
-    //TODO
+    // Get data
+    $('#users li').each(function() {
+        var id = this.id.slice(5);
+        var name = $.trim($(this).text());
+        Preved.users[id] = {
+            name: name,
+            avatar: null
+        };
+        if ('me' == this.className) {
+            Preved.me = id;
+        }
+    });
+    
+    // Bind events
+    $('#new textarea').keypress(function(e) {
+        // Safari sends ASCII 3 on Enter
+        if (13 == e.keyCode || 3 == e.keyCode) {
+            if (e.ctrlKey || e.metaKey) {
+                //TODO
+            } else {
+                $('#new').submit();
+            }
+        }
+    })
+    $('#new textarea').keyup(function(e) {
+        if (13 == e.keyCode || 3 == e.keyCode) {
+            $('#new textarea').val('');
+        }
+    });
+    $('#new').submit(function() {
+        var text = $('#new textarea').val();
+        if ('' == text) return false;
+        $('#new textarea').val('');
+        Preved.message(text);
+        return false;
+    });
 });
 
 $(window).unload(function(){

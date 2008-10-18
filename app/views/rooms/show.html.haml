@@ -2,7 +2,7 @@
   #messages
     %ol
       %li= "#{@user.name} logged in"
-  %form{ :method => 'post', :action => '' }
+  %form{ :method => 'post', :action => '', :id => 'new' }
     %textarea
     %input{ :type => 'submit', :value => 'Send ↑' }
     %p
@@ -14,5 +14,10 @@
 #panel
   #about
   %ul#users
-    %li{:id => "user-#{@user.id}"}
-      = @user.name
+    - User.inside(@room).each do |user|
+      - if @user.id == user.id
+        %li{ :id => "user-#{user.id}", :class => "me" }
+          = user.name
+      - else
+        %li{ :id => "user-#{user.id}" }
+          = user.name
