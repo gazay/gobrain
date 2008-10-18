@@ -91,7 +91,7 @@ li {
         #settings a.mute {
             background: url(../images/mute.png) no-repeat 0 100%;
         }
-        #settings a.sounds {
+        #settings a.unmute {
             background: url(../images/sounds.png) no-repeat 0 100%;
         }
     #about {

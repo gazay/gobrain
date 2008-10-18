@@ -51,6 +51,7 @@ Chat = {
  
 Preved = {
       me: $.cookie('user'),
+      sounds: $.cookie('mute') ? true : false,
       message: function(text) {
           this.send('POST', { message: text })
       },
@@ -71,6 +72,18 @@ Preved = {
                 type: method,
                 data: data
             })
+      },
+      mute: function() {
+          Preved.sounds = false
+          $('#settings .mute').hide()
+          $('#settings .unmute').show()
+          $.cookie('mute', true) //TODO check to global set
+      },
+      unmute: function() {
+          Preved.sounds = true
+          $('#settings .unmute').hide()
+          $('#settings .mute').show()
+          $.cookie('mute', false)
       },
       server: {
           receive: function(data){ this[data.command](data) },
@@ -127,6 +140,14 @@ $(document).ready(function() {
         if ('' == text) return false
         $('#new textarea').val('')
         Preved.message(text)
+        return false
+    })
+    $('#settings a.unmute').click(function() {
+        Preved.unmute()
+        return false
+    })
+    $('#settings a.mute').click(function() {
+        Preved.mute()
         return false
     })
     $('#new textarea').focus()
