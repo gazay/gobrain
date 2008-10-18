@@ -50,6 +50,7 @@ class RoomsController < ApplicationController
   
   def update_place
     @place.update_attributes!(:name => params[:name])
+    @user.update_attributes!(:name => params[:name])
   end
   
   def destroy_place
