@@ -1,3 +1,8 @@
 ActionController::Routing::Routes.draw do |map|
-  map.resources :rooms
+  map.root :controller => 'rooms'
+  map.connect ':id', :controller => 'rooms', :action => 'show',    :conditions => { :method => :get }
+  map.connect ':id', :controller => 'rooms', :action => 'update',  :conditions => { :method => :put }
+  map.connect ':id', :controller => 'rooms', :action => 'create',  :conditions => { :method => :post }
+  map.connect ':id', :controller => 'rooms', :action => 'destroy', :conditions => { :method => :delete }
+  map.resources 'rooms'
 end
