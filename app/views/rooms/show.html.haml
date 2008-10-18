@@ -1,6 +1,7 @@
 #center
   %ol#messages
-    %li.system.in= "#{@user.name} logged in"
+    %li.system.in
+      %p= "#{@user.name} logged in"
   %form{ :method => 'post', :action => '', :id => 'new' }
     %textarea
     %input{ :type => 'submit', :value => 'Send ↑' }

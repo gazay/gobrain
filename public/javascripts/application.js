@@ -38,8 +38,8 @@ Chat = {
         return $('#messages .author:last').hasClass('user' + id)
     },
     add: function(text, type) {
-        return $('<li/>').html(text).appendTo('#messages')
-            .css('padding-left', Chat.maxName + 15 + 'px').hide().fadeIn(200)
+        return $('<li/>').html('<p>' + text + '</p>').appendTo('#messages')
+            .css('padding-left', Chat.maxName + 10 + 'px').hide().fadeIn(200)
     },
     sys: function(text, type) {
         this.add(text).addClass('system ' + type)
@@ -52,7 +52,7 @@ Chat = {
             author.text(User.name(user)).prependTo(message)
             if (Chat.maxName < author.width()) {
                 Chat.maxName = author.width()
-                $('#messages li').css('padding-left', author.width() + 15 + 'px')
+                $('#messages li').css('padding-left', author.width() + 10 + 'px')
                 $('#messages .author').css('width', author.width() + 'px')
             } else {
                 author.css('width', Chat.maxName)

@@ -31,16 +31,19 @@ li {
                 position: absolute;
                 left: 0;
                 padding: 0 5px;
-                border-right: 1px solid #dcdcdc
+            }
+            #messages p {
+                border-left: 1px solid #dcdcdc;
+                padding-left: 5px;
             }
         #messages li.mine {
-            background-color: #ffc;
+            background-color: #ffd;
         }
         #messages li.in {
-            background-color: #cfc;
+            background-color: #dfd;
         }
         #messages li.out {
-            background-color: #fcc;
+            background-color: #fdd;
         }
     #new {
         position: absolute;
