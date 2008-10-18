@@ -7,14 +7,19 @@ User = {
     },
     add: function(id, name){
         if (!User.el(id).length) {
-            $('<li/>').attr('id', "user" + id).text(name).appendTo('#users')
+            user = $('<li/>').attr('id', "user" + id).text(name)
+            user.appendTo('#users').hide().show(500)
             User.el(id).data('count', 0)
         }
         user = User.el(id).data('count', User.count(id) + 1)
     },
     remove: function(id){
         User.el(id).data('count', User.count(id) - 1)
-        if (User.cound(id) <= 0) User.el(id).remove()
+        if (User.cound(id) <= 0) {
+            User.el(id).hide(500, function() {
+                $(this).remove()
+            }
+        }
     },
     rename: function(id, name){
         User.el(id).text(name)
