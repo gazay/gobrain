@@ -3,17 +3,38 @@
     padding: 0;
     font-family: "Trebuchet MS", Verdana, sans-serif;
 }
+body {
+    /* TODO move to theme JS */
+    background: #87c1cc url(../themes/sky/background.jpg) 0 0 no-repeat;
+}
 li {
 	  list-style: none;
 	  display: block;
 }
+
 #center {
     width: 30em;
     margin: 1ex auto;
     }
     #messages {
         position: absolute;
-    }
+        width: 30em;
+        border-bottom: 1px solid #ccc;
+        overflow: auto;
+        }
+        #messages li {
+            background-color: white;
+            border-top: 1px solid #ccc;
+        }
+        #messages li.mine {
+            background-color: #ffc;
+        }
+        #messages li.in {
+            background-color: #cfc;
+        }
+        #messages li.out {
+            background-color: #fcc;
+        }
     #new {
         position: absolute;
         bottom: 0;
