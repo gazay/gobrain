@@ -3,7 +3,7 @@
   %head
     %title Preved
     %meta{ 'http-equiv' => 'content-type', :content => 'text/html', :charset => 'utf-8' }
-    %link{ :rel => 'shortcut icon', :href => '/favicon.ico', :type = 'image/x-icon' }
+    %link{ :rel => 'shortcut icon', :href => '/favicon.ico', :type => 'image/x-icon' }
     = javascript_include_token
     = javascript_include_tag 'jquery', 'jquery/json', 'jquery/form', 'jquery/cookie', 'juggernaut/juggernaut', 'juggernaut/jquerynaut', 'juggernaut/swfobject', 'application'
     = juggernaut :channels => [@room.permalink], :client_id => @user.id
