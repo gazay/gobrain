@@ -1,0 +1,45 @@
+h1. factory_girl_on_rails
+
+bq. factory_girl_on_rails provides some minor creature comforts for using factory_girl on a Rails project:
+
+* Automatically load factories in either RAILS_ROOT/test/factories or RAILS_ROOT/spec/factories
+* A generator for putting new factories in either RAILS_ROOT/test/factories or RAILS_ROOT/spec/factories
+
+
+h2. Installing
+
+<pre>script/plugin install git://github.com/technicalpickles/factory_girl_on_rails.git</pre>
+
+For test add the following to test_helper
+<pre>require 'factory_girl_on_rails'</pre>
+
+For specs add the following to spec_helper
+<pre>config.include FactoryGirlOnRails</pre>
+
+h2. Example
+
+After installing this plugin, you just start using factories in RAILS_ROOT/test/factories.
+
+As a convenience, a factory generator is provided:
+
+*Tests*
+<pre>./script/generate factory account</pre>
+
+creates an Account factory: test/factories/account_factory.rb
+
+<pre>./script/generate factory post title:string body:text published:boolean</pre>
+
+creates a Post factory with a string title, text body, and published flag.
+
+*Specs -- if spec directory is defined*
+<pre>./script/generate factory account</pre>
+
+creates an Account factory: spec/factories/account_factory.rb
+
+<pre>./script/generate factory post title:string body:text published:boolean</pre>
+
+creates a Post factory with a string title, text body, and published flag.
+
+h2. Copyright
+
+Copyright (c) 2008 Josh Nichols, released under the MIT license
