@@ -4,7 +4,7 @@ class Place < ActiveRecord::Base
   
   validates_presence_of :user, :room
   
-  default_value_for :name do |it|
-    it.user.name
-  end
+  default_value_for(:name) {|it| it.user.name }
+  default_value_for(:connected_time) { Time.now }  
+  default_value_for(:connections) { 1 }
 end

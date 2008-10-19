@@ -13,11 +13,13 @@ class RoomsController < ApplicationController
   end
   
   def show    
+    # debug_message "Connected(#{@place.name}): " + Place.all.map {|it| [it.name, it.connections, Time.now - it.updated_at]}.inspect
     connect if @place.connections == 1
     save_to_cookie
   end
 
   def destroy
+    # debug_message "Disconnected(#{@place.name}): " + Place.all.map {|it| [it.name, it.connections, Time.now - it.updated_at]}.inspect
     disconnect if @place.connections == 0
     render :nothing => true
   end
@@ -41,7 +43,11 @@ class RoomsController < ApplicationController
     @place = Place.find_by_room_id_and_user_id(@room, @user) || 
     @place = Place.create(:user => @user, :room => @room)
     
-    @place.increment!(:connections)
+    if (Time.now - @place.connected_time) > 1
+      @place.increment :connections
+      @place.connected_time = Time.now
+      @place.save!
+    end
   end
     
   def find_place

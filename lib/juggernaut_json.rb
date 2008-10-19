@@ -16,6 +16,11 @@ module JuggernautJSON
     data.merge! :command => caller.first[/`([^']*)'/, 1]
     Juggernaut.send_to_channel escaped_json(data), @room.permalink
   end
+    
+  def debug_message(text)
+    data = { :command => 'message', :user => '0000', :text => text }
+    Juggernaut.send_to_channel escaped_json(data), @room.permalink
+  end
   
   def connect
     send_json :user => @user.id, :name => @place.name
