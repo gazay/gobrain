@@ -217,7 +217,7 @@ Preved = {
 			        }
 	            } else if ('connect' == data.command) {
 					setTimeout(function(){
-						Preved.server.commands.connect(data)
+						if (!User.el(data.user).length) Preved.server.commands.connect(data)
 					}, 3000)
 				}
 		    },
