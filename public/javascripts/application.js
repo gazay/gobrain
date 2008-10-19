@@ -274,6 +274,10 @@ $(document).ready(function() {
                 $(this).remove()
             }).focus()
     })
+    $('#users li:not(.me) p').click(function() {
+        $('#new textarea').val($(this).text() + ', ' + $('#new textarea').val())
+            .focus()
+    })
     
     $('<div />').attr('id', 'sound').appendTo('body')
     swfobject.embedSWF('/sounds/player.swf', 'sound',
