@@ -149,7 +149,7 @@ $(document).ready(function() {
         $('#rocket .next').hide()
     })
     $('#rocket').click(function() {
-        if (!Rocket.blocked && !Rocket.up) {
+        if (!Rocket.blocked && !Rocket.up && !Rocket.win) {
             Rocket.start()
             Rocket.blocked = true
         }

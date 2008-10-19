@@ -5,7 +5,7 @@ User = {
     add: function(id, name) {
         if (!User.el(id).length) {
             user = $('<li/>').attr('id', "user" + id).html('<p>' + name + '</p>')
-            user.appendTo('#users').hide().show(500)
+                .appendTo('#users').click(Preved.toUser).hide().show(500)
         }
     },
     remove: function(id) {
@@ -63,7 +63,7 @@ Chat = {
         return message;
     },
     format: function(text) {
-        return '<p>' + String(text).replace(/\n/, '</p><p>') + '</p>'
+        return '<p>' + String(text).replace(/\n/g, '</p><p>') + '</p>'
     },
     timer: null,
     time: function() {
@@ -125,6 +125,9 @@ Style = {
         Style.rules[name] = rule
         rule('init')
     },
+    remove: function(name) {
+        delete Style.rules[name]
+    },
     rules: {
         messages: function(caller) {
             $('#messages').css('height', 
@@ -148,6 +151,10 @@ Style = {
 Preved = {
     me: $.cookie('user'),
     lastTheme: null,
+    toUser: function() {
+        $('#new textarea').val($(this).text() + ': ' + $('#new textarea').val())
+            .focus()
+    },
     muted: function() {
         if ($.cookie('muted')) {
             Preved.mute()
@@ -200,6 +207,13 @@ Preved = {
     },
     server: {
         receive: function(data) {
+            if ('connect' != data.command && data.user) {
+                if (!User.el(data.user).length) {
+                    if (console) console.log(
+                        'Event from nobody (' + params.user + ')', params)
+                    return
+                }
+            }
             if (Preved.server.commands[data.command]) {
                 Preved.server.commands[data.command](data)
             }
@@ -220,11 +234,6 @@ Preved = {
                 }
             },
             message: function(params) {
-                if (0 == User.el(params.user).length) {
-                    if (console) console.log(
-                        'Message from nobody (' + params.user + '): ' + params.text)
-                    return
-                }
                 Chat.msg(params.user, params.text)
                 if (params.user != Preved.me) {
                     Preved.play('/sounds/message.mp3')
@@ -337,10 +346,7 @@ $(document).ready(function() {
                 $('#new textarea').focus()
             }).focus()
     })
-    $('#users li:not(.me) p').click(function() {
-        $('#new textarea').val($(this).text() + ': ' + $('#new textarea').val())
-            .focus()
-    })
+    $('#users li:not(.me) p').click(Preved.toUser)
     
     $('<div />').attr('id', 'sound').appendTo('body')
     swfobject.embedSWF('/sounds/player.swf', 'sound',
