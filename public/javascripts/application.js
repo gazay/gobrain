@@ -90,7 +90,7 @@ Chat = {
 
 Style = {
     init: function() {
-        Style.run('first')
+        Style.run('init')
         $(window).resize(function() {
             Style.run('resize')
         })
@@ -123,7 +123,7 @@ Style = {
     },
     add: function(name, rule) {
         Style.rules[name] = rule
-        rule()
+        rule('init')
     },
     rules: {
         messages: function(caller) {
@@ -220,6 +220,11 @@ Preved = {
                 }
             },
             message: function(params) {
+                if (0 == User.el(params.user).length) {
+                    if (console) console.log(
+                        'Message from nobody (' + params.user + '): ' + params.text)
+                    return
+                }
                 Chat.msg(params.user, params.text)
                 if (params.user != Preved.me) {
                     Preved.play('/sounds/message.mp3')
@@ -355,4 +360,8 @@ $(document).ready(function() {
     } else {
         $('#new textarea').focus()
     }
+    
+    $('#about a').click(function() {
+        return false
+    })
 })
