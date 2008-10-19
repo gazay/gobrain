@@ -64,33 +64,51 @@ Chat = {
             }
         }
     },
+    timer: null,
     time: function() {
-        var time = (new Date()).toTimeString().match(/(\d\d:\d\d):/)[1]
+        var now = new Date()
+        if (0 != (now.getMinutes() % 5)) {
+            clearInterval(Chat.timer)
+            Chat.timerStarter = setInterval(Chat.startTimer, 1000)
+            return;
+        }
+        var time = now.toTimeString().match(/(\d\d:\d\d):/)[1]
         Chat.write(time).addClass('time system')
+    },
+    timerStarter: null,
+    startTimer: function() {
+        var minutes = (new Date()).getMinutes()
+        if (0 == (minutes % 5)) {
+            clearInterval(Chat.timerStarter)
+            Chat.time()
+            Chat.timer = setInterval(Chat.time, 5 * 60 * 1000)
+        }
     }
 }
 
 Style = {
     init: function() {
-        Style.run()
-        $(window).resize(Style.run)
+        Style.run('first')
+        $(window).resize(function() {
+            Style.run('resize')
+        })
         Style.fontStandard = $('#about').width()
         setInterval(Style.checkFont, 500)
     },
-    run: function() {
+    run: function(caller) {
         for (rule in Style.rules) {
-            Style.rules[rule]()
+            Style.rules[rule](caller)
         }
     },
     fontStandard: null,
     checkFont: function() {
         if ($('#about').width() != Style.fontStandard) {
             Style.fontStandard = $('#about').width()
-            Style.run()
+            Style.run('font')
         }
     },
     rules: {
-        messages: function() {
+        messages: function(caller) {
             $('#messages').css('height', 
                 $('#new').offset().top - $('#messages').offset().top)
         }
@@ -218,6 +236,13 @@ $(document).ready(function() {
     })
     $('#new textarea').focus()
     
+    $('#new input').mouseover(function() {
+        $(this).addClass('hover')
+    })
+    $('#new input').mouseout(function() {
+        $(this).removeClass('hover')
+    })
+    
     $('#settings a.muted').click(function() {
         Preved.unmute()
         return false
@@ -245,7 +270,7 @@ $(document).ready(function() {
         player.SetVariable('method:play', '')
     }
     
-    setInterval(Chat.time, 5 * 60 * 1000)
+    Chat.timerStarter = setInterval(Chat.startTimer, 1000)
     
     Style.init()
 })
