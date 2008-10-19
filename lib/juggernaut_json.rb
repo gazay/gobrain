@@ -34,8 +34,6 @@ module JuggernautJSON
     send_json :user => @user.id, :text => params[:message]
   end
   
-  def 
-  
   def user
     send_json :user => @user.id, :name => params[:name]
   end
