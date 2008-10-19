@@ -1,6 +1,6 @@
 class AddConnectionsToPlace < ActiveRecord::Migration
   def self.up
-    add_column :places, :connections, :integer, :default => 0
+    add_column :places, :connections, :integer
   end
 
   def self.down
