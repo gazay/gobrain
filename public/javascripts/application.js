@@ -36,6 +36,7 @@ Chat = {
         
         var message = $('<li />').html(Chat.format(text)).appendTo('#messages')
             .css('padding-left', Chat.maxName + 10)
+		message.css('width', message.width() - Chat.maxName - 25)
         
         if (30 > scroll) messages.scrollTop = messages.scrollHeight
         return message
@@ -143,6 +144,7 @@ Style = {
                 })
             }
             $('#messages li').css('padding-left', Chat.maxName + 10)
+			$('#messages li').css('width', $('#messages li').width() - Chat.maxName - 25)
             $('#messages .author').css('width', Chat.maxName)
         }
     }
@@ -218,7 +220,7 @@ Preved = {
 	            } else if ('connect' == data.command) {
 					setTimeout(function(){
 						if (!User.el(data.user).length) Preved.server.commands.connect(data)
-					}, 3000)
+					}, 1000)
 				}
 		    },
 		    commands: {

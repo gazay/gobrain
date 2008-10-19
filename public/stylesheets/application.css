@@ -17,10 +17,11 @@ li {
     }
     #messages {
         position: absolute;
-        width: 37em;
+        width: 500px;
         overflow: auto;
         }
         #messages li {
+            width: 500px;
             background-color: white;
             border-top: 1px solid #efefef;
             }
