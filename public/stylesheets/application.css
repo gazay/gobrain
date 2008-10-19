@@ -12,12 +12,12 @@ li {
 }
 
 #center {
-    width: 35em;
+    width: 37em;
     margin: 1ex auto;
     }
     #messages {
         position: absolute;
-        width: 35em;
+        width: 37em;
         overflow: auto;
         }
         #messages li {
@@ -53,14 +53,14 @@ li {
         position: absolute;
         bottom: 0;
         width: 7.5em;
-        padding: 2px 2px 2px 27.5em;
+        padding: 2px 2px 2px 29.5em;
         height: 9ex;
         background: black;
         }
         #new textarea {
             position: absolute;
             left: 2px;
-            width: 27.5em;
+            width: 29.5em;
             height: 9ex;
             overflow: hidden;
             border: 0 solid white;
@@ -83,7 +83,7 @@ li {
         }
 #panel {
     width: 13.5em;
-    padding-left: 49.5em;
+    padding-left: 51.5em;
     margin: 1ex auto 0 auto;
     }   
     #panel .position {
