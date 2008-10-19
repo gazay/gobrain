@@ -15,13 +15,13 @@ class Examiner
   
   def refresh_rooms
     Room.all.each do |room|
-      Rails.logger.info "REFRESHING #{room.permalink}"
+      # Rails.logger.info "REFRESHING #{room.permalink}"
       check room
     end
   end
   
   def check(room)
-    Rails.logger.info "CHECKING #{room.permalink}"
+    # Rails.logger.info "CHECKING #{room.permalink}"
     unless (clients = inside(room)) == (users = room.users.map(&:id).sort)
       Rails.logger.info "INSIDE #{room.permalink}: #{clients.inspect} vs #{users.inspect}"
       (clients - users).each {|client| subscribe client, room }
@@ -34,7 +34,7 @@ class Examiner
   end
   
   def subscribe(id, room)
-    Rails.logger.info "SUBSCRIBING TO #{id}:#{room}"
+    # Rails.logger.info "SUBSCRIBING TO #{id}:#{room}"
     @room = room
     @user = User.find id    
     @place = Place.create :user => @user, :room => @room
@@ -42,7 +42,7 @@ class Examiner
   end
   
   def unsubscribe(id, room)
-    Rails.logger.info "UNSUBSCRIBING FROM #{id}:#{room}"
+    # Rails.logger.info "UNSUBSCRIBING FROM #{id}:#{room}"
     @room = room
     @user = User.find id
     places = Place.find_all_by_room_id_and_user_id @room, @user
@@ -56,7 +56,7 @@ end
 examiner = Examiner.new
 
 while($running) do
-  Rails.logger.info 'NEW ROUND'
+  # Rails.logger.info 'NEW ROUND'
   examiner.refresh_rooms  
-  sleep 10
+  sleep 5
 end
