@@ -8,9 +8,7 @@ module JuggernautJSON
     end
   end
     
-
   def escaped_json(data)
-    debugger
     data.inject({}) {|escaped_data,(k,v)| escaped_data.merge k => Helper.h(v) }.to_json
   end
   

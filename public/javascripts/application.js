@@ -2,24 +2,16 @@ User = {
     el: function(id) {
         return $('#user' + id)
     },
-    count: function(id) {
-        return User.el(id).data('count')
-    },
     add: function(id, name){
         if (!User.el(id).length) {
             user = $('<li/>').attr('id', "user" + id).text(name)
             user.appendTo('#users').hide().show(500)
-            User.el(id).data('count', 0)
         }
-        user = User.el(id).data('count', User.count(id) + 1)
     },
     remove: function(id){
-        User.el(id).data('count', User.count(id) - 1)
-        if (User.cound(id) <= 0) {
-            User.el(id).hide(500, function() {
-                $(this).remove()
-            })
-        }
+        User.el(id).hide(500, function() {
+            $(this).remove()
+        })
     },
     rename: function(id, name){
         $('#user' + id + ' p').text(name)
@@ -140,7 +132,7 @@ Preved = {
     },
     send: function(method, data) {
           if (!data) data = {}
-          if ('DELETE' == method || 'PUT' == method) {
+          if ('PUT' == method) {
               data['_method'] = method
               method = 'POST'
           }
@@ -212,9 +204,7 @@ Juggernaut.fn.logger = function(msg) { //DEBUG
     }
 }
  
-$(document).ready(function() {
-    $('#users > li').data('count', 0)
-    
+$(document).ready(function() {    
     $('#new textarea').keypress(function(e) {
       // Safari sends ASCII 3 on Enter
         if (13 == e.keyCode || 3 == e.keyCode) {
@@ -302,8 +292,4 @@ $(document).ready(function() {
     Chat.timerStarter = setInterval(Chat.startTimer, 1000)
     
     Style.init()
-})
-
-$(window).unload(function() {
-    Preved.send('DELETE') //TODO debug
 })
