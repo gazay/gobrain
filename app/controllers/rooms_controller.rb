@@ -41,10 +41,6 @@ class RoomsController < ApplicationController
   end
       
   private
-
-  def alive?
-    Juggernaut.client_in_channel?(@user.id, @room.permalink)
-  end
   
   def init_place
     @room = Room.find_or_create_by_permalink params[:id]
