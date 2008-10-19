@@ -16,6 +16,7 @@ class RoomsController < ApplicationController
     # debug_message "Connected(#{@place.name}): " + Place.all.map {|it| [it.name, it.connections, Time.now - it.updated_at]}.inspect
     connect if @place.connections == 1
     save_to_cookie
+    Checker.async_wait :place_id => @place.id
   end
 
   def destroy
