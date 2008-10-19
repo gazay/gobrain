@@ -63,7 +63,7 @@ Chat = {
         return message;
     },
     format: function(text) {
-        return '<p>' + String(text).replace(/\n/, '</p><p>') + '</p>'
+        return '<p>' + String(text).replace(/\n/g, '</p><p>') + '</p>'
     },
     timer: null,
     time: function() {
@@ -200,6 +200,13 @@ Preved = {
     },
     server: {
         receive: function(data) {
+            if ('connect' != data.command && data.user) {
+                if (0 == User.el(data.user).length) {
+                    if (console) console.log(
+                        'Event from nobody (' + params.user + ')', params)
+                    return
+                }
+            }
             if (Preved.server.commands[data.command]) {
                 Preved.server.commands[data.command](data)
             }
@@ -220,11 +227,6 @@ Preved = {
                 }
             },
             message: function(params) {
-                if (0 == User.el(params.user).length) {
-                    if (console) console.log(
-                        'Message from nobody (' + params.user + '): ' + params.text)
-                    return
-                }
                 Chat.msg(params.user, params.text)
                 if (params.user != Preved.me) {
                     Preved.play('/sounds/message.mp3')
