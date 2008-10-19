@@ -168,13 +168,7 @@ Preved = {
     },
     server: {
         receive: function(data) {
-            if ('connect' == data.command) {
-                var user = data
-                // Prevent incorrect order of events on refresh
-                setTimeout(function() {
-                    Preved.server.connect(user)
-                }, 1000)
-            } else {
+            if (Preved.server[data.command]) {
                 Preved.server[data.command](data)
             }
 		    },
