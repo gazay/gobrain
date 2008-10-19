@@ -57,10 +57,12 @@ Chat = {
         return message
     },
     msg: function(user, text) {
-        var message = Chat.add(text)
-        if (!Chat.isLast(user)) Chat.author(message, user)
-        if (Preved.me == user) message.addClass('mine')
-        return message;
+		if (!/^[ \n]*$/.test(text)){
+	        var message = Chat.add(text)
+	        if (!Chat.isLast(user)) Chat.author(message, user)
+	        if (Preved.me == user) message.addClass('mine')
+	        return message;			
+		}
     },
     format: function(text) {
         return '<p>' + String(text).replace(/\n/g, '</p><p>') + '</p>'
