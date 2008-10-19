@@ -90,7 +90,7 @@ Chat = {
 
 Style = {
     init: function() {
-        Style.run('first')
+        Style.run('init')
         $(window).resize(function() {
             Style.run('resize')
         })
@@ -123,7 +123,7 @@ Style = {
     },
     add: function(name, rule) {
         Style.rules[name] = rule
-        rule()
+        rule('init')
     },
     rules: {
         messages: function(caller) {

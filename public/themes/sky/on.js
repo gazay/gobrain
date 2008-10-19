@@ -5,6 +5,9 @@ Rocket = {
     fly: false,
     startFalling: null,
     hide: true,
+    winner: false,
+    stepSize: 70,
+    stepsToWin: 5,
     start: function(step) {
         if (Rocket.up) return
         
@@ -31,9 +34,13 @@ Rocket = {
         
         Style.stop()
         $('#rocket').animate({
-            bottom: (Rocket.step * 10) + '%'
+            bottom: Rocket.step * Rocket.stepSize
         }, 3000, null, function() {
             Rocket.up = false
+            if (Rocket.stepsToWin == Rocket.step) {
+                $('#rocket .win').show()
+                Rocket.winner = true
+            }
             Rocket.fall()
         })
         setTimeout(function() {
@@ -53,6 +60,13 @@ Rocket = {
             if (Rocket.hide) {
                 $('#rocket .body').fadeOut(400)
             }
+            Rocket.blocked = false
+            if ($('#rocket .next').is(':visible')) {
+                $('#rocket .next').hide()
+                $('#rocket .click').show()
+            }
+            Rocket.winner = false
+            $('#rocket .win').fadeOut(400)
         })
     }
 }
@@ -94,10 +108,20 @@ $(document).ready(function() {
         .css('width', '100%').css('top', 167)
         .css('text-align', 'center')
         .css('background-color', '#ffc').hide()
+    $('<div />').appendTo('#rocket').attr('class', 'win')
+        .text('WIN!')
+        .css('position', 'absolute')
+        .css('width', '100%').css('top', 167)
+        .css('text-align', 'center')
+        .css('background-color', '#cfc').hide()
     
-    Style.add('rocket', function() {
+    Style.add('rocket', function(caller) {
         $('#rocket-trace').css('padding-right', 
             ($('#messages').offset().left - 147) + 'px')
+        if ('resize' == caller || 'init' == caller) {
+            Rocket.stepSize = $(window).height() - $('#rocket').height()
+            Rocket.stepSize /= Rocket.stepsToWin
+        }
     })
     
     $('#rocket-trace').mouseover(function() {
@@ -117,10 +141,10 @@ $(document).ready(function() {
         Rocket.hide = true
     })
     $('#rocket').mouseover(function() {
-        if (Rocket.blocked) $('#rocket .next').show()
+        if (Rocket.blocked && !Rocket.win) $('#rocket .next').show()
     })
     $('#rocket').mouseout(function() {
-        if (Rocket.blocked) $('#rocket .next').hide()
+        $('#rocket .next').hide()
     })
     $('#rocket').click(function() {
         //if (!Rocket.blocked) {
