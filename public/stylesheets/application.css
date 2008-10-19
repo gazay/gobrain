@@ -32,9 +32,6 @@ li {
                 padding: 0 5px;
                 font-weight: bold;
             }
-            #messages p {
-                padding-left: 5px;
-            }
         #messages li.system {
             background-color: #dff;
         }

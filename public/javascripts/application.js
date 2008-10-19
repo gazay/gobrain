@@ -2,35 +2,27 @@ User = {
     el: function(id) {
         return $('#user' + id)
     },
-    count: function(id) {
-        return User.el(id).data('count')
-    },
-    add: function(id, name){
+    add: function(id, name) {
         if (!User.el(id).length) {
-            user = $('<li/>').attr('id', "user" + id).text(name)
+            user = $('<li/>').attr('id', "user" + id).html('<p>' + name + '</p>')
             user.appendTo('#users').hide().show(500)
-            User.el(id).data('count', 0)
-        }
-        user = User.el(id).data('count', User.count(id) + 1)
-    },
-    remove: function(id){
-        User.el(id).data('count', User.count(id) - 1)
-        if (User.cound(id) <= 0) {
-            User.el(id).hide(500, function() {
-                $(this).remove()
-            })
         }
     },
-    rename: function(id, name){
+    remove: function(id) {
+        User.el(id).hide(500, function() {
+            $(this).remove()
+        })
+    },
+    rename: function(id, name) {
         $('#user' + id + ' p').text(name)
     },
-    name: function(id){
+    name: function(id) {
         return $('#user' + id + ' p').text()
     }
 }
  
 Chat = {
-    maxName: -10,
+    maxName: null,
     isLast: function(id) {
         if ($('#messages li:last').hasClass('system')) {
             return false;
@@ -46,8 +38,7 @@ Chat = {
         author.text(User.name(user)).prependTo(message)
         if (Chat.maxName < author.width()) {
             Chat.maxName = author.width()
-            $('#messages li').css('padding-left', author.width() + 10)
-            $('#messages .author').css('width', author.width())
+            Style.rules.authors()
         } else {
             author.css('width', Chat.maxName)
         }
@@ -75,9 +66,7 @@ Chat = {
             Chat.timerStarter = setInterval(Chat.startTimer, 1000)
             return;
         }
-        if ($('#messages li:last').hasClass('time')) {
-            return
-        }
+        $('#messages li:last.time').remove()
         var time = now.toTimeString().match(/(\d\d:\d\d):/)[1]
         Chat.sys(time, 'time')
     },
@@ -117,6 +106,18 @@ Style = {
         messages: function(caller) {
             $('#messages').css('height', 
                 $('#new').offset().top - $('#messages').offset().top)
+        },
+        authors: function(caller) {
+            if ('resize' == caller) return
+            if ('font' == caller || !Chat.maxName) {
+                Chat.maxName = 0
+                $('#messages .author').each(function(i) {
+                    width = $(this).width()
+                    if (Chat.maxName < width) Chat.maxName = width
+                })
+            }
+            $('#messages li').css('padding-left', Chat.maxName + 10)
+            $('#messages .author').css('width', Chat.maxName)
         }
     }
 }
@@ -146,7 +147,7 @@ Preved = {
     },
     send: function(method, data) {
           if (!data) data = {}
-          if ('DELETE' == method || 'PUT' == method) {
+          if ('PUT' == method) {
               data['_method'] = method
               method = 'POST'
           }
@@ -219,8 +220,6 @@ Juggernaut.fn.logger = function(msg) { //DEBUG
 }
  
 $(document).ready(function() {
-    $('#users > li').data('count', 0)
-    
     $('#new textarea').keyup(function(e) {
         if ((13 == e.keyCode || 3 == e.keyCode) && !e.shiftKey) {
             $('#new').submit()
@@ -299,8 +298,4 @@ $(document).ready(function() {
     Chat.timerStarter = setInterval(Chat.startTimer, 1000)
     
     Style.init()
-})
-
-$(window).unload(function() {
-    Preved.send('DELETE') //TODO debug
 })

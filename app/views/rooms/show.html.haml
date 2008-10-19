@@ -1,14 +1,15 @@
 #center
   %ol#messages
     %li.system.in
-      %p= "#{@user.name} logged in"
+      %span.author= @user.name
+      %p logged in.
   %form{ :method => 'post', :action => '', :id => 'new' }
     %textarea
     %input{ :type => 'submit', :value => 'Send ↑' }
     %p
       Send: Enter
     %p
-      New line: Ctrl+Enter
+      New line: Shift+Enter
 #panel
   .position
     #settings
