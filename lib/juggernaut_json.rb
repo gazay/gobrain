@@ -12,8 +12,8 @@ module JuggernautJSON
     data.inject({}) {|escaped_data,(k,v)| escaped_data.merge k => Helper.h(v) }.to_json
   end
   
-  def send_json(data)
-    data.merge! :command => caller.first[/`([^']*)'/, 1]
+  def send_json(data, command = nil)
+    data.merge! :command => caller.first[/`([^']*)'/, 1] if command.nil?
     Juggernaut.send_to_channel escaped_json(data), @room.permalink
   end
     
@@ -34,11 +34,18 @@ module JuggernautJSON
     send_json :user => @user.id, :text => params[:message]
   end
   
+  def 
+  
   def user
-    if params[:name]
-      send_json :user => @user.id, :name => params[:name]
-    elsif params[:theme]
-      send_json :user => @user.id, :theme => params[:theme]
-    end
+    send_json :user => @user.id, :name => params[:name]
+  end
+  
+  def theme
+    send_json :user => @user.id, :theme => params[:theme]
+  end
+  
+  def broadcast
+    send_json :user => @user.id, :broadcast => params[:broadcast], 
+        :params => params[:params]
   end
 end

@@ -31,7 +31,15 @@ class RoomsController < ApplicationController
   end
   
   def update
-    user
+    if params[:user]
+      user
+    elsif params[:theme]
+      theme
+    elsif params[:broadcast]
+      broadcast
+    else
+      raise ActiveRecord::RecordNotFound
+    end
     render :nothing => true
   end
       
@@ -39,7 +47,11 @@ class RoomsController < ApplicationController
 
   def init_place
     @room = Room.find_or_create_by_permalink params[:id]
-    @user = User.find_or_create_by_id cookies['user']
+    @user = User.find_by_id cookies['user']
+    if not @user
+        @user = User.find_or_create_by_id cookies['user']
+        @new_user = true
+    end
     
     @place = Place.find_by_room_id_and_user_id(@room, @user) || 
     @place = Place.create(:user => @user, :room => @room)

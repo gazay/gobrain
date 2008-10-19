@@ -95,19 +95,35 @@ Style = {
             Style.run('resize')
         })
         Style.fontStandard = $('#about').width()
-        setInterval(Style.checkFont, 500)
+        Style.start()
     },
     run: function(caller) {
         for (rule in Style.rules) {
             Style.rules[rule](caller)
         }
     },
+    start: function() {
+        if (!Style.fontChecked) {
+            Style.fontChecked = setInterval(Style.checkFont, 1000)
+        }
+    },
+    stop: function() {
+        if (Style.fontChecked) {
+            clearInterval(Style.fontChecked)
+            Style.fontChecked = null
+        }
+    },
     fontStandard: null,
+    fontChecked: null,
     checkFont: function() {
         if ($('#about').width() != Style.fontStandard) {
             Style.fontStandard = $('#about').width()
             Style.run('font')
         }
+    },
+    add: function(name, rule) {
+        Style.rules[name] = rule
+        rule()
     },
     rules: {
         messages: function(caller) {
@@ -152,6 +168,10 @@ Preved = {
         }
         this.send('PUT', { name: name })
     },
+    broadcast: function(command, params) {
+        if ("undefined" == typeof params) params = {}
+        this.send('PUT', { broadcast: command, params: params })
+    },
     send: function(method, data) {
           if (!data) data = {}
           if ('PUT' == method) {
@@ -175,33 +195,47 @@ Preved = {
     },
     server: {
         receive: function(data) {
-            if (Preved.server[data.command]) {
-                Preved.server[data.command](data)
+            if (Preved.server.commands[data.command]) {
+                Preved.server.commands[data.command](data)
             }
 		    },
-        connect: function(params) {
-            User.add(params.user, params.name)
-            Chat.author(Chat.sys('logged in.', 'in'), params.user)
-            if (params.user != Preved.me) {
-                Preved.play('/sounds/connect.mp3')
-            }
+		    commands: {
+            connect: function(params) {
+                User.add(params.user, params.name)
+                Chat.author(Chat.sys('logged in.', 'in'), params.user)
+                if (params.user != Preved.me) {
+                    Preved.play('/sounds/connect.mp3')
+                }
+            },
+            disconnect: function(params) {
+                Chat.author(Chat.sys('logged out.', 'out'), params.user)
+                User.remove(params.user, 'out')
+                if (params.user != Preved.me) {
+                    Preved.play('/sounds/disconnect.mp3')
+                }
+            },
+            message: function(params) {
+                Chat.msg(params.user, params.text)
+                if (params.user != Preved.me) {
+                    Preved.play('/sounds/message.mp3')
+                }
+            },
+            user: function(params) {
+                Chat.sys(User.name(params.user) + ' is now ' + params.name + '.')
+                User.rename(params.user, params.name)
+            },
+		        broadcast: function(params) {
+		            if (Preved.server.listeners[params.broadcast]) {
+                    Preved.server.listeners[params.broadcast](params.params, params.user)
+                }
+		        }
         },
-        disconnect: function(params) {
-            Chat.author(Chat.sys('logged out.', 'out'), params.user)
-            User.remove(params.user, 'out')
-            if (params.user != Preved.me) {
-                Preved.play('/sounds/disconnect.mp3')
-            }
+        listeners: {},
+        add: function(command, func) {
+            Preved.server.listeners[command] = func
         },
-        message: function(params) {
-            Chat.msg(params.user, params.text)
-            if (params.user != Preved.me) {
-                Preved.play('/sounds/message.mp3')
-            }
-        },
-        user: function(params) {
-            Chat.sys(User.name(params.user) + ' is now ' + params.name + '.')
-            User.rename(params.user, params.name)
+        remove: function(command) {
+            delete Preved.server.listeners[command]
         }
     }
 }
@@ -304,5 +338,9 @@ $(document).ready(function() {
     
     Style.init()
     
-    $('#users .me .rename').click()
+    if ($('#users .me').is('.new')) {
+        $('#users .me .rename').click()
+    } else {
+        $('#new textarea').focus()
+    }
 })
