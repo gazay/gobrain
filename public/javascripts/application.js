@@ -22,10 +22,10 @@ User = {
         }
     },
     rename: function(id, name){
-        User.el(id).text(name)
+        $('#user' + id + ' p').text(name)
     },
     name: function(id){
-        return User.el(id).text()
+        return $('#user' + id + ' p').text()
     }
 }
  
@@ -133,7 +133,10 @@ Preved = {
         this.send('PUT', { theme: name })
     },
     user: function(name){
-        this.send('PUT', name)
+        if (User.name(Preved.me) == name) {
+            return
+        }
+        this.send('PUT', { name: name })
     },
     send: function(method, data) {
           if (!data) data = {}
@@ -176,20 +179,20 @@ Preved = {
             }
         },
         disconnect: function(params) {
-            Chat.sys(User.name(params.user) + ' logged out.')
+            Chat.sys(User.name(params.user) + ' logged out.', 'out')
             User.remove(params.user, 'out')
             if (params.user != Preved.me) {
                 Preved.play('/sounds/disconnect.mp3')
             }
         },
         message: function(params) {
-            //TODO debug in Opera
             Chat.msg(params.user, params.text)
             if (params.user != Preved.me) {
                 Preved.play('/sounds/message.mp3')
             }
         },
         user: function(params) {
+            Chat.sys(User.name(params.user) + ' is now ' + params.name + '.')
             User.rename(params.user, params.name)
         }
     }
@@ -254,6 +257,32 @@ $(document).ready(function() {
     
     $('#settings select').change(function() {
         Preved.theme(this.options[this.selectedIndex].value.toLowerCase())
+    })
+    
+    $('#panel').mouseover(function() {
+        if (0 != $('#users .renamer').length) {
+            return
+        }
+        $('#users .rename').show()
+    })
+    $('#panel').mouseout(function() {
+        $('#users .rename').hide()
+    })
+    $('#users li .rename').click(function() {
+        $(this).hide()
+        $(this).nextAll('p, span').hide()
+        $('<input type="text" />').appendTo($(this).parent()).addClass('renamer')
+            .val($(this).nextAll('p').text())
+            .keyup(function(e) {
+                if (13 == e.keyCode || 3 == e.keyCode) {
+                    $(this).blur()
+                }
+            })
+            .blur(function() {
+                Preved.user($(this).val())
+                $(this).prevAll('p, span').show()
+                $(this).remove()
+            }).focus()
     })
     
     $('<div />').attr('id', 'sound').appendTo('body')

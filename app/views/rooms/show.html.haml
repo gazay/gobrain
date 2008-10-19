@@ -10,24 +10,27 @@
     %p
       New line: Ctrl+Enter
 #panel
-  #settings
-    %a.sounds{ :title => 'Turn sounds off', :href => '#' }
-      %span Sounds
-    %a.muted{ :title => 'Turn sounds on', :href => '#', :style => 'display: none'}
-      %span Mute
-    Theme:
-    %select
-      %option{ :selected => 'selected' }
-        Sky
-      %option
-        Road
-  #about
-    = "Your friends can chat with you now by going to <a href='http://#{request.domain}#{request.path}}'>#{request.domain}#{request.path}</a>."
-  %ul#users
-    - User.inside(@room).each do |user|
-      - if @user.id == user.id
-        %li{ :id => "user#{user.id}", :class => "me" }
-          = user.name
-      - else
-        %li{ :id => "user#{user.id}" }
-          = user.name
+  .position
+    #settings
+      %a.sounds{ :title => 'Turn sounds off', :href => '#' }
+        %span Sounds
+      %a.muted{ :title => 'Turn sounds on', :href => '#', :style => 'display: none'}
+        %span Mute
+      Theme:
+      %select
+        %option{ :selected => 'selected' }
+          Sky
+        %option
+          Road
+    #about
+      = "Your friends can chat with you now by going to <a href='http://#{request.domain}#{request.path}}'>#{request.domain}#{request.path}</a>."
+    %ul#users
+      - User.inside(@room).each do |user|
+        - if @user.id == user.id
+          %li{ :id => "user#{user.id}", :class => "me" }
+            %input{ :type => 'button', :value => 'Rename me', :class => 'rename' }
+            %span{ :title => 'Me' } ☺
+            %p= user.name
+        - else
+          %li{ :id => "user#{user.id}" }
+            %p= user.name

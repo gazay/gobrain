@@ -86,41 +86,60 @@ li {
     width: 12em;
     padding-left: 48em;
     margin: 1ex auto 0 auto;
-    }
-    #settings {
-        background: black;
-        color: white;
-        padding: 4px 7px 4px 0.7em;
-        margin-bottom: 1px;
-        text-align: right;
+    }   
+    #panel .position {
+        position: absolute;
+        width: 12em;
         }
-        #settings a {
-            float: left;
-            display: block;
-            width: 20px;
-            height: 100%;
-            overflow: hidden;
-            text-decoration: none;
-            margin-top: 2px;
+        #settings {
+            background: black;
+            color: white;
+            padding: 4px 7px 4px 0.7em;
+            margin-bottom: 1px;
+            text-align: right;
             }
-            #settings a span {
-                visibility: hidden;
+            #settings a {
+                float: left;
+                display: block;
+                width: 20px;
+                height: 100%;
+                overflow: hidden;
+                text-decoration: none;
+                margin-top: 2px;
+                }
+                #settings a span {
+                    visibility: hidden;
+                }
+            #settings a.muted {
+                background: url(../images/muted.png) no-repeat 0 100%;
             }
-        #settings a.muted {
-            background: url(../images/muted.png) no-repeat 0 100%;
+            #settings a.sounds {
+                background: url(../images/sounds.png) no-repeat 0 100%;
+            }
+        #about {
+            padding: 5px;
+            background-color: #ffc;
+            border: 2px solid black;
+            margin-bottom: 1px;
         }
-        #settings a.sounds {
-            background: url(../images/sounds.png) no-repeat 0 100%;
-        }
-    #about {
-        padding: 5px;
-        background-color: #ffc;
-        border: 2px solid black;
-        margin-bottom: 1px;
-    }
-    #users li {
-        padding: 5px;
-        background-color: black;
-        color: white;
-        margin-bottom: 1px;
-    }
+        #users li {
+            padding: 0 5px;
+            background-color: black;
+            color: white;
+            margin-bottom: 1px;
+            line-height: 3.5ex;
+            }
+            #users li .rename {
+                display: none;
+                position: absolute;
+                background-color: #ffc;
+                border: 2px solid black;
+                padding: 0 2px;
+                height: 3.5ex;
+                right: 12em;
+                font-size: 100%;
+            }
+            #users li span {
+                float: right;
+                font-size: 150%;
+            }
