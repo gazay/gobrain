@@ -249,13 +249,13 @@ $(document).ready(function() {
         Preved.theme(this.options[this.selectedIndex].value.toLowerCase())
     })
     
-    $('#panel').mouseover(function() {
+    $('#users .me').mouseover(function() {
         if (0 != $('#users .renamer').length) {
             return
         }
         $('#users .rename').show()
     })
-    $('#panel').mouseout(function() {
+    $('#users .me').mouseout(function() {
         $('#users .rename').hide()
     })
     $('#users li .rename').click(function() {
@@ -275,7 +275,7 @@ $(document).ready(function() {
             }).focus()
     })
     $('#users li:not(.me) p').click(function() {
-        $('#new textarea').val($(this).text() + ', ' + $('#new textarea').val())
+        $('#new textarea').val($(this).text() + ': ' + $('#new textarea').val())
             .focus()
     })
     
