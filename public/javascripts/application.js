@@ -24,7 +24,7 @@ User = {
 Chat = {
     maxName: null,
     isLast: function(id) {
-        if ($('#messages li:last').hasClass('system')) {
+        if ($('#messages li:last').prev().hasClass('system')) {
             return false;
         }
         return $('#messages .author:last').hasClass('user' + id)
@@ -231,7 +231,8 @@ Preved = {
                 }
             },
             user: function(params) {
-                Chat.sys(User.name(params.user) + ' is now ' + params.name + '.')
+                Chat.sys('<strong>' + User.name(params.user) + '</strong>' + 
+                    ' is now <strong>' + params.name + '</strong>.')
                 User.rename(params.user, params.name)
             },
             theme: function(params) {

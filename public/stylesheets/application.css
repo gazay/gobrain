@@ -82,13 +82,13 @@ li {
             padding-left: 1ex;
         }
 #panel {
-    width: 12em;
-    padding-left: 48em;
+    width: 13.5em;
+    padding-left: 49.5em;
     margin: 1ex auto 0 auto;
     }   
     #panel .position {
         position: absolute;
-        width: 12em;
+        width: 13.5em;
         }
         #settings {
             background: black;
@@ -134,20 +134,14 @@ li {
                 position: absolute;
                 background-color: #ffc;
                 border: 2px solid black;
-                padding: 0 2px;
+                padding: 1 2px;
                 height: 3.5ex;
-                right: 12em;
+                right: 13.5em;
                 font-size: 100%;
             }
             #users li .rename.hover {
                 text-decoration: underline;
                 cursor: pointer;
-            }
-            #users li.me span {
-                float: right;
-                margin-top: -1px;
-                font-size: 150%;
-                display: none;
             }
             #users li p {
                 cursor: pointer;
@@ -156,7 +150,7 @@ li {
                 cursor: default;
             }
         #users li.me {
-            background: black url(/images/smile.png) no-repeat 10.5em 0.5ex;
+            background: black url(/images/smile.png) no-repeat 12em 0.5ex;
             padding-right: 1.5em;
         }
         #users li.me.renamed {
