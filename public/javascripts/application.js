@@ -32,37 +32,40 @@ User = {
 Chat = {
     maxName: -10,
     isLast: function(id) {
-        console.log($('#messages li'))
         if ($('#messages li:last').hasClass('system')) {
             return false;
         }
         return $('#messages .author:last').hasClass('user' + id)
     },
-    write: function(text) {
-        return $('<li />').html('<p>' + text + '</p>').appendTo('#messages')
+    add: function(text) {
+        return $('<li />').html(Chat.format(text)).appendTo('#messages')
             .css('padding-left', Chat.maxName + 10)
     },
-    add: function(text) {
-        return Chat.write(text).hide().fadeIn(200)
+    author: function(message, user) {
+        author = $('<span/>').addClass('author user' + user)
+        author.text(User.name(user)).prependTo(message)
+        if (Chat.maxName < author.width()) {
+            Chat.maxName = author.width()
+            $('#messages li').css('padding-left', author.width() + 10)
+            $('#messages .author').css('width', author.width())
+        } else {
+            author.css('width', Chat.maxName)
+        }
+        return message
     },
     sys: function(text, type) {
-        this.add(text).addClass('system ' + type)
+        var message = this.add(text).addClass('system')
+        if (type) message.addClass(type)
+        return message
     },
     msg: function(user, text) {
-        var last = Chat.isLast(user)
-        message = this.add(text)
+        var message = Chat.add(text)
+        if (!Chat.isLast(user)) Chat.author(message, user)
         if (Preved.me == user) message.addClass('mine')
-        if (!last) {
-            author = $('<span/>').addClass('author user' + user)
-            author.text(User.name(user)).prependTo(message)
-            if (Chat.maxName < author.width()) {
-                Chat.maxName = author.width()
-                $('#messages li').css('padding-left', author.width() + 10)
-                $('#messages .author').css('width', author.width())
-            } else {
-                author.css('width', Chat.maxName)
-            }
-        }
+        return message;
+    },
+    format: function(text) {
+        return '<p>' + String(text).replace(/\n/, '</p><p>') + '</p>'
     },
     timer: null,
     time: function() {
@@ -76,7 +79,7 @@ Chat = {
             return
         }
         var time = now.toTimeString().match(/(\d\d:\d\d):/)[1]
-        Chat.write(time).addClass('time system')
+        Chat.sys(time, 'time')
     },
     timerStarter: null,
     startTimer: function() {
@@ -176,13 +179,13 @@ Preved = {
 		    },
         connect: function(params) {
             User.add(params.user, params.name)
-            Chat.sys(params.name + ' logged in.', 'in')
+            Chat.author(Chat.sys('logged in.', 'in'), params.user)
             if (params.user != Preved.me) {
                 Preved.play('/sounds/connect.mp3')
             }
         },
         disconnect: function(params) {
-            Chat.sys(User.name(params.user) + ' logged out.', 'out')
+            Chat.author(Chat.sys('logged out.', 'out'), params.user)
             User.remove(params.user, 'out')
             if (params.user != Preved.me) {
                 Preved.play('/sounds/disconnect.mp3')
