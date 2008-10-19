@@ -234,7 +234,6 @@ $(document).ready(function() {
         Preved.message(text)
         return false
     })
-    $('#new textarea').focus()
     
     $('input').mouseover(function() {
         $(this).addClass('hover')
@@ -279,6 +278,7 @@ $(document).ready(function() {
                 Preved.user($(this).val())
                 $(this).prevAll('p, span').show()
                 $(this).remove()
+                $('#new textarea').focus()
             }).focus()
     })
     $('#users li:not(.me) p').click(function() {
@@ -303,4 +303,6 @@ $(document).ready(function() {
     Chat.timerStarter = setInterval(Chat.startTimer, 1000)
     
     Style.init()
+    
+    $('#users .me .rename').click()
 })
