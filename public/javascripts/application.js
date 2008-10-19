@@ -24,7 +24,6 @@ User = {
 Chat = {
     maxName: -10,
     isLast: function(id) {
-        console.log($('#messages li'))
         if ($('#messages li:last').hasClass('system')) {
             return false;
         }
