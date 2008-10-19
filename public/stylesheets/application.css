@@ -4,8 +4,6 @@
     font-family: "Trebuchet MS", Verdana, sans-serif;
 }
 body {
-    /* TODO move to theme JS */
-    background: #87c1cc url(../themes/sky/background.jpg) 0 0 no-repeat;
     font-size: 0.875em;
 }
 li {
