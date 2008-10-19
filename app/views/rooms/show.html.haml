@@ -28,7 +28,7 @@
             %option
               = theme.capitalize
     #about
-      = "Your friends can chat with you now by going to <a href='http://#{request.domain}#{request.path}}'>#{request.domain}#{request.path}</a>."
+      = "Your friends can chat with you now by going to <a href='http://#{request.domain}#{request.path}'>#{request.domain}#{request.path}</a>."
     %ul#users
       - User.inside(@room).each do |user|
         - if @user.id == user.id

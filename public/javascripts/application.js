@@ -355,4 +355,8 @@ $(document).ready(function() {
     } else {
         $('#new textarea').focus()
     }
+    
+    $('#about a').click(function() {
+        return false
+    })
 })
