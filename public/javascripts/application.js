@@ -147,6 +147,7 @@ Style = {
 
 Preved = {
     me: $.cookie('user'),
+    lastTheme: null,
     muted: function() {
         if ($.cookie('muted')) {
             Preved.mute()
@@ -193,6 +194,10 @@ Preved = {
         $('#settings .sounds').show()
         $.cookie('muted', null, { path: '/' })
     },
+    script: function(url) {
+        $('<script />').attr('src', url).attr('type', 'text/javascript')
+            .appendTo('body')
+    },
     server: {
         receive: function(data) {
             if (Preved.server.commands[data.command]) {
@@ -223,6 +228,12 @@ Preved = {
             user: function(params) {
                 Chat.sys(User.name(params.user) + ' is now ' + params.name + '.')
                 User.rename(params.user, params.name)
+            },
+            theme: function(params) {
+                params.theme = params.theme.replace('/', '')
+                Preved.script('/themes/' + Preved.lastTheme + '/off.js')
+                Preved.script('/themes/' + params.theme + '/on.js')
+                Preved.lastTheme = params.theme
             },
 		        broadcast: function(params) {
 		            if (Preved.server.listeners[params.broadcast]) {
@@ -288,6 +299,7 @@ $(document).ready(function() {
     $('#settings select').change(function() {
         Preved.theme(this.options[this.selectedIndex].value.toLowerCase())
     })
+    Preved.lastTheme = $.trim($('#settings option:selected').text().toLowerCase())
     
     $('#users .me').mouseover(function() {
         if (0 != $('#users .renamer').length) {

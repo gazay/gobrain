@@ -1,3 +1,4 @@
+%script{ :type => 'text/javascript', :src => "/themes/#{@room.theme}/on.js" }
 #center
   %ol#messages
     %li.system.in
@@ -19,10 +20,13 @@
         %span Mute
       Theme:
       %select
-        %option{ :selected => 'selected' }
-          Sky
-        %option
-          Road
+        - ['sky', 'road'].each do |theme|
+          - if theme == @room.theme
+            %option{ :selected => 'selected' }
+              = theme.capitalize
+          - else
+            %option
+              = theme.capitalize
     #about
       = "Your friends can chat with you now by going to <a href='http://#{request.domain}#{request.path}}'>#{request.domain}#{request.path}</a>."
     %ul#users
