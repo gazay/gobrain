@@ -142,7 +142,12 @@ Preved = {
         return html.replace(/&/g, "&amp;").replace(/</g, "&lt;");
     },
     server: {
-        receive: function(data) { this[data.command](data) },
+        receive: function(data) { 
+			var delay = 0;
+			// Use delay to prevent incorrect order of events when happens refresh
+			if (data.command == 'connect') delay = 1000;
+			setTimeout("Preved.server['"+data.command+"']("+Juggernaut.toJSON(data)+")", delay)
+		},
         connect: function(params) {
             User.add(params.user, Preved.escape(params.name))
             Chat.sys(Preved.escape(params.name) + ' logged in.', 'in')
