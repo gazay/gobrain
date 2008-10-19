@@ -7,7 +7,7 @@ module JuggernautJSON
       instance.send :html_escape, data
     end
   end
-    
+        
   def escaped_json(data)
     data.inject({}) {|escaped_data,(k,v)| escaped_data.merge k => Helper.h(v) }.to_json
   end

@@ -5,7 +5,7 @@ class User < ActiveRecord::Base
   validates_presence_of :name
 
   named_scope :inside, lambda {|room|
-    { :conditions => ["places.room_id = ? and places.connections > 0", room.id], :include => :places }
+    { :conditions => ["places.room_id = ?", room.id], :include => :places }
   }
 
   default_value_for :name do
