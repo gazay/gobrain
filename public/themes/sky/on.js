@@ -11,9 +11,6 @@ Rocket = {
     start: function(step) {
         if (Rocket.up) return
         
-        $('#rocket .click').hide()
-        $('#rocket .next').hide()
-        
         $('#rocket .body').show()
         $('#rocket .fire').show()
         
@@ -28,6 +25,9 @@ Rocket = {
             Preved.broadcast('start', Rocket.step)
         }
         
+        $('#rocket .click').hide()
+        $('#rocket .next').hide()
+        
         Rocket.up = true
         Rocket.fly = true
         Rocket.step += 1
@@ -38,6 +38,8 @@ Rocket = {
         }, 3000, null, function() {
             Rocket.up = false
             if (Rocket.stepsToWin == Rocket.step) {
+                $('#rocket .next').hide()
+                $('#rocket .click').hide()
                 $('#rocket .win').show()
                 Rocket.winner = true
             }
@@ -119,7 +121,7 @@ $(document).ready(function() {
         $('#rocket-trace').css('padding-right', 
             ($('#messages').offset().left - 147) + 'px')
         if ('resize' == caller || 'init' == caller) {
-            Rocket.stepSize = $(window).height() - $('#rocket').height()
+            Rocket.stepSize = $(document).height() - $('#rocket').height()
             Rocket.stepSize /= Rocket.stepsToWin
         }
     })
@@ -127,7 +129,7 @@ $(document).ready(function() {
     $('#rocket-trace').mouseover(function() {
         $('#rocket .body').show()
         
-        if (!Rocket.blocked) {
+        if (!Rocket.blocked && !Rocket.winner) {
             $('#rocket .click').show()
         }
         Rocket.hide = false
@@ -141,13 +143,13 @@ $(document).ready(function() {
         Rocket.hide = true
     })
     $('#rocket').mouseover(function() {
-        if (Rocket.blocked && !Rocket.win) $('#rocket .next').show()
+        if (Rocket.blocked && !Rocket.winner) $('#rocket .next').show()
     })
     $('#rocket').mouseout(function() {
         $('#rocket .next').hide()
     })
     $('#rocket').click(function() {
-        if (!Rocket.blocked) {
+        if (!Rocket.blocked && !Rocket.up) {
             Rocket.start()
             Rocket.blocked = true
         }
