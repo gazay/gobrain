@@ -147,10 +147,10 @@ $(document).ready(function() {
         $('#rocket .next').hide()
     })
     $('#rocket').click(function() {
-        //if (!Rocket.blocked) {
+        if (!Rocket.blocked) {
             Rocket.start()
             Rocket.blocked = true
-        //}
+        }
     })
     
     Preved.server.add('start', Rocket.start)
