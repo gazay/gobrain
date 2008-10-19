@@ -207,16 +207,19 @@ Preved = {
     },
     server: {
         receive: function(data) {
-            if ('connect' != data.command && data.user) {
-                if (!User.el(data.user).length) {
-                    if (console) console.log(
-                        'Event from nobody (' + params.user + ')', params)
-                    return
-                }
-            }
-            if (Preved.server.commands[data.command]) {
-                Preved.server.commands[data.command](data)
-            }
+	            if ('connect' != data.command && data.user) {
+	                if (!User.el(data.user).length) {
+	                    if (console) console.log(
+	                        'Event from nobody (' + params.user + ')', params)
+	                    return
+	                } else if (Preved.server.commands[data.command]) {
+			        	Preved.server.commands[data.command](data)
+			        }
+	            } else if ('connect' == data.command) {
+					setTimeout(function(){
+						Preved.server.commands.connect(data)
+					}, 3000)
+				}
 		    },
 		    commands: {
             connect: function(params) {
