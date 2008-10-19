@@ -5,7 +5,7 @@ Rocket = {
     fly: false,
     startFalling: null,
     hide: true,
-    start: function(params) {
+    start: function(step) {
         if (Rocket.up) return
         
         $('#rocket .click').hide()
@@ -19,8 +19,10 @@ Rocket = {
             Rocket.step -= Math.floor(
                 ((new Date()).getTime() - Rocket.startFalling) / 4500)
         }
-        if (params) {
-            Rocket.step = params.step
+        if (step) {
+            Rocket.step = Number(step)
+        } else {
+            Preved.broadcast('start', Rocket.step)
         }
         
         Rocket.up = true

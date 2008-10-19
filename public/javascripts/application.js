@@ -98,7 +98,6 @@ Style = {
         Style.start()
     },
     run: function(caller) {
-            console.log(1)
         for (rule in Style.rules) {
             Style.rules[rule](caller)
         }
@@ -169,6 +168,10 @@ Preved = {
         }
         this.send('PUT', { name: name })
     },
+    broadcast: function(command, params) {
+        if ("undefined" == typeof params) params = {}
+        this.send('PUT', { broadcast: command, params: params })
+    },
     send: function(method, data) {
           if (!data) data = {}
           if ('PUT' == method) {
@@ -192,13 +195,8 @@ Preved = {
     },
     server: {
         receive: function(data) {
-            var storage = Preved.server.commands
-            if ('theme:' == data.command.slice(0, 6)) {
-                storage = Preved.server.listeners
-                data.command = data.command.slice(6, -1)
-            }
-            if (storage[data.command]) {
-                storage[data.command](data)
+            if (Preved.server.commands[data.command]) {
+                Preved.server.commands[data.command](data)
             }
 		    },
 		    commands: {
@@ -225,7 +223,12 @@ Preved = {
             user: function(params) {
                 Chat.sys(User.name(params.user) + ' is now ' + params.name + '.')
                 User.rename(params.user, params.name)
-            }
+            },
+		        broadcast: function(params) {
+		            if (Preved.server.listeners[params.broadcast]) {
+                    Preved.server.listeners[params.broadcast](params.params, params.user)
+                }
+		        }
         },
         listeners: {},
         add: function(command, func) {

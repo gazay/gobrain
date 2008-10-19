@@ -17,7 +17,7 @@ ActiveRecord::Schema.define(:version => 20081019154655) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "name"
-    t.integer  "connections"
+    t.integer  "connections",    :default => 0
     t.datetime "connected_time"
   end
 

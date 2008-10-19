@@ -30,7 +30,15 @@ class RoomsController < ApplicationController
   end
   
   def update
-    user
+    if params[:user]
+      user
+    elsif params[:theme]
+      theme
+    elsif params[:broadcast]
+      broadcast
+    else
+      raise ActiveRecord::RecordNotFound
+    end
     render :nothing => true
   end
       

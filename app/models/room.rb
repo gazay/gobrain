@@ -5,6 +5,8 @@ class Room < ActiveRecord::Base
   validates_presence_of :permalink
   validates_uniqueness_of :permalink
   
+  default_value_for :theme, 'sky'
+  
   def to_param
     permalink
   end
