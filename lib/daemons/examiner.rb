@@ -58,4 +58,5 @@ examiner = Examiner.new
 while($running) do
   # Rails.logger.info 'NEW ROUND'
   examiner.refresh_rooms  
+  sleep 2
 end
