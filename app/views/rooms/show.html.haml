@@ -34,7 +34,6 @@
         - if @user.id == user.id
           %li{ :id => "user#{user.id}", :class => 'me' + (@new_user ? ' new' : '') }
             %input{ :type => 'button', :value => 'Rename me', :class => 'rename' }
-            %span{ :title => 'Me' } ☺
             %p= user.name
         - else
           %li{ :id => "user#{user.id}" }

@@ -31,7 +31,7 @@ class RoomsController < ApplicationController
   end
   
   def update
-    if params[:user]
+    if params[:name]
       user
     elsif params[:theme]
       theme

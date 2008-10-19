@@ -146,6 +146,7 @@ li {
                 float: right;
                 margin-top: -1px;
                 font-size: 150%;
+                display: none;
             }
             #users li p {
                 cursor: pointer;
@@ -153,3 +154,11 @@ li {
             #users li.me p {
                 cursor: default;
             }
+        #users li.me {
+            background: black url(/images/smile.png) no-repeat 10.5em 0.5ex;
+            padding-right: 1.5em;
+        }
+        #users li.me.renamed {
+            background-image: none;
+            padding-right: 5px;
+        }
