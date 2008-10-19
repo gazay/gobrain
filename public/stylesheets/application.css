@@ -74,6 +74,9 @@ li {
             margin-bottom: 1ex;
             font-size: 100%;
         }
+        #new input:hover {
+            background-color: #ffc;
+        }
         #new p {
             font-size: 70%;
             color: gray;
