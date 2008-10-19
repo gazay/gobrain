@@ -30,8 +30,15 @@ Chat = {
         return $('#messages .author:last').hasClass('user' + id)
     },
     add: function(text) {
-        return $('<li />').html(Chat.format(text)).appendTo('#messages')
+        var messages = $('#messages')[0]
+        var scroll = messages.scrollHeight
+        scroll -= messages.scrollTop + $('#messages').height()
+        
+        var message = $('<li />').html(Chat.format(text)).appendTo('#messages')
             .css('padding-left', Chat.maxName + 10)
+        
+        if (30 > scroll) messages.scrollTop = messages.scrollHeight
+        return message
     },
     author: function(message, user) {
         author = $('<span/>').addClass('author user' + user)
@@ -168,13 +175,7 @@ Preved = {
     },
     server: {
         receive: function(data) {
-            if ('connect' == data.command) {
-                var user = data
-                // Prevent incorrect order of events on refresh
-                setTimeout(function() {
-                    Preved.server.connect(user)
-                }, 1000)
-            } else {
+            if (Preved.server[data.command]) {
                 Preved.server[data.command](data)
             }
 		    },
@@ -233,7 +234,6 @@ $(document).ready(function() {
         Preved.message(text)
         return false
     })
-    $('#new textarea').focus()
     
     $('input').mouseover(function() {
         $(this).addClass('hover')
@@ -255,13 +255,13 @@ $(document).ready(function() {
         Preved.theme(this.options[this.selectedIndex].value.toLowerCase())
     })
     
-    $('#panel').mouseover(function() {
+    $('#users .me').mouseover(function() {
         if (0 != $('#users .renamer').length) {
             return
         }
         $('#users .rename').show()
     })
-    $('#panel').mouseout(function() {
+    $('#users .me').mouseout(function() {
         $('#users .rename').hide()
     })
     $('#users li .rename').click(function() {
@@ -278,7 +278,12 @@ $(document).ready(function() {
                 Preved.user($(this).val())
                 $(this).prevAll('p, span').show()
                 $(this).remove()
+                $('#new textarea').focus()
             }).focus()
+    })
+    $('#users li:not(.me) p').click(function() {
+        $('#new textarea').val($(this).text() + ': ' + $('#new textarea').val())
+            .focus()
     })
     
     $('<div />').attr('id', 'sound').appendTo('body')
@@ -298,4 +303,6 @@ $(document).ready(function() {
     Chat.timerStarter = setInterval(Chat.startTimer, 1000)
     
     Style.init()
+    
+    $('#users .me .rename').click()
 })

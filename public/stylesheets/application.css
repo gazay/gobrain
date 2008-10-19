@@ -149,3 +149,9 @@ li {
                 margin-top: -1px;
                 font-size: 150%;
             }
+            #users li p {
+                cursor: pointer;
+            }
+            #users li.me p {
+                cursor: default;
+            }
