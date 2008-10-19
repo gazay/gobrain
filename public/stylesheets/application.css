@@ -30,11 +30,14 @@ li {
                 position: absolute;
                 left: 0;
                 padding: 0 5px;
+                font-weight: bold;
             }
             #messages p {
-                border-left: 1px solid #dcdcdc;
                 padding-left: 5px;
             }
+        #messages li.system {
+            background-color: #dff;
+        }
         #messages li.mine {
             background-color: #ffd;
         }
@@ -46,6 +49,7 @@ li {
         }
         #messages li.time {
             color: gray;
+            background-color: white;
             }
             #messages li.time p {
                 border-left: none;
@@ -139,7 +143,12 @@ li {
                 right: 12em;
                 font-size: 100%;
             }
-            #users li span {
+            #users li .rename.hover {
+                text-decoration: underline;
+                cursor: pointer;
+            }
+            #users li.me span {
                 float: right;
+                margin-top: -1px;
                 font-size: 150%;
             }

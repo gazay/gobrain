@@ -72,6 +72,9 @@ Chat = {
             Chat.timerStarter = setInterval(Chat.startTimer, 1000)
             return;
         }
+        if ($('#messages li:last').hasClass('time')) {
+            return
+        }
         var time = now.toTimeString().match(/(\d\d:\d\d):/)[1]
         Chat.write(time).addClass('time system')
     },
@@ -215,23 +218,14 @@ Juggernaut.fn.logger = function(msg) { //DEBUG
 $(document).ready(function() {
     $('#users > li').data('count', 0)
     
-    $('#new textarea').keypress(function(e) {
-      // Safari sends ASCII 3 on Enter
-        if (13 == e.keyCode || 3 == e.keyCode) {
-            if (e.ctrlKey || e.metaKey) {
-                //TODO
-            } else {
-                $('#new').submit()
-            }
-        }
-    })
     $('#new textarea').keyup(function(e) {
-        if (13 == e.keyCode || 3 == e.keyCode) {
-            $('#new textarea').val('')
+        if ((13 == e.keyCode || 3 == e.keyCode) && !e.shiftKey) {
+            $('#new').submit()
         }
     })
     $('#new').submit(function() {
         var text = $('#new textarea').val()
+        $('#new textarea').val('')
         if ('' == text) return false
         $('#new textarea').val('')
         Preved.message(text)
@@ -239,10 +233,10 @@ $(document).ready(function() {
     })
     $('#new textarea').focus()
     
-    $('#new input').mouseover(function() {
+    $('input').mouseover(function() {
         $(this).addClass('hover')
     })
-    $('#new input').mouseout(function() {
+    $('input').mouseout(function() {
         $(this).removeClass('hover')
     })
     
@@ -271,7 +265,7 @@ $(document).ready(function() {
     $('#users li .rename').click(function() {
         $(this).hide()
         $(this).nextAll('p, span').hide()
-        $('<input type="text" />').appendTo($(this).parent()).addClass('renamer')
+        $('<input type="text" />').addClass('renamer').appendTo($(this).parent())
             .val($(this).nextAll('p').text())
             .keyup(function(e) {
                 if (13 == e.keyCode || 3 == e.keyCode) {
