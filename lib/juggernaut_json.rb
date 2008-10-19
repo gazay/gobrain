@@ -35,6 +35,10 @@ module JuggernautJSON
   end
   
   def user
-    send_json :user => @user.id, :name => @place.name
+    if params[:name]
+      send_json :user => @user.id, :name => params[:name]
+    elsif params[:theme]
+      send_json :user => @user.id, :theme => params[:theme]
+    end
   end
 end

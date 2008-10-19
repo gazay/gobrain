@@ -43,9 +43,9 @@ class RoomsController < ApplicationController
     @place = Place.find_by_room_id_and_user_id(@room, @user) || 
     @place = Place.create(:user => @user, :room => @room)
     
-    if (Time.now - @place.connected_time) > 1
+    if (Time.now - @place.connected_time) > 3
       @place.increment :connections
-      @place.connected_time = Time.now
+      @place.connected_time = Time.now.utc
       @place.save!
     end
   end
@@ -60,12 +60,16 @@ class RoomsController < ApplicationController
     @user = User.find params[:client_id]
     @room = Room.find_by_permalink params[:channels].first
     @place = Place.find_by_room_id_and_user_id(@room, @user)
-    @place.decrement!(:connections)
+    @place.decrement!(:connections) unless @place.connections == 0
   end  
   
   def update_place
-    @place.update_attributes!(:name => params[:name])
-    @user.update_attributes!(:name => params[:name])
+    if params[:name]
+      @place.update_attributes!(:name => params[:name])
+      @user.update_attributes!(:name => params[:name])
+    elsif params[:theme]
+      @room.update_attributes!(:theme => params[:theme])
+    end
   end
     
   def save_to_cookie
