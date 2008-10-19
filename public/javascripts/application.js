@@ -138,9 +138,6 @@ Preved = {
         $('#settings .sounds').show()
         $.cookie('muted', null, { path: '/' })
     },
-    escape: function(html) {
-        return html.replace(/&/g, "&amp;").replace(/</g, "&lt;");
-    },
     server: {
         receive: function(data) {
             if ('connect' == data.command) {
@@ -154,8 +151,8 @@ Preved = {
             }
 		    },
         connect: function(params) {
-            User.add(params.user, Preved.escape(params.name))
-            Chat.sys(Preved.escape(params.name) + ' logged in.', 'in')
+            User.add(params.user, params.name)
+            Chat.sys(params.name + ' logged in.', 'in')
             if (params.user != Preved.me) {
                 Preved.play('/sounds/connect.mp3')
             }
@@ -169,13 +166,13 @@ Preved = {
         },
         message: function(params) {
             //TODO debug in Opera
-            Chat.msg(params.user, Preved.escape(params.text))
+            Chat.msg(params.user, params.text)
             if (params.user != Preved.me) {
                 Preved.play('/sounds/message.mp3')
             }
         },
         user: function(params) {
-            User.rename(params.user, Preved.escape(params.name))
+            User.rename(params.user, params.name)
         }
     }
 }

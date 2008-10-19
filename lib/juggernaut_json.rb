@@ -1,8 +1,22 @@
 module JuggernautJSON
+  class Helper
+    include Singleton
+    include ERB::Util
 
+    def self.h(data)
+      instance.send :html_escape, data
+    end
+  end
+    
+
+  def escaped_json(data)
+    debugger
+    data.inject({}) {|escaped_data,(k,v)| escaped_data.merge k => Helper.h(v) }.to_json
+  end
+  
   def send_json(data)
     data.merge! :command => caller.first[/`([^']*)'/, 1]
-    Juggernaut.send_to_channel data.to_json, @room.permalink
+    Juggernaut.send_to_channel escaped_json(data), @room.permalink
   end
   
   def connect
