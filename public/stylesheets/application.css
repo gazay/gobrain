@@ -93,27 +93,28 @@ li {
         #settings {
             background: black;
             color: white;
-            padding: 4px 7px 4px 0.7em;
+            padding: 0 7px 0 0.7em;
             margin-bottom: 1px;
             text-align: right;
+            height: 3.5ex;
+            line-height: 3.5ex;
             }
             #settings a {
                 float: left;
                 display: block;
                 width: 20px;
-                height: 100%;
+                height: 3.5ex;
                 overflow: hidden;
                 text-decoration: none;
-                margin-top: 2px;
                 }
                 #settings a span {
                     visibility: hidden;
                 }
             #settings a.muted {
-                background: url(../images/muted.png) no-repeat 0 100%;
+                background: url(../images/muted.png) no-repeat 0 50%;
             }
             #settings a.sounds {
-                background: url(../images/sounds.png) no-repeat 0 100%;
+                background: url(../images/sounds.png) no-repeat 0 50%;
             }
         #about {
             padding: 5px;
@@ -146,6 +147,7 @@ li {
                 float: right;
                 margin-top: -1px;
                 font-size: 150%;
+                display: none;
             }
             #users li p {
                 cursor: pointer;
@@ -153,3 +155,11 @@ li {
             #users li.me p {
                 cursor: default;
             }
+        #users li.me {
+            background: black url(/images/smile.png) no-repeat 10.5em 0.5ex;
+            padding-right: 1.5em;
+        }
+        #users li.me.renamed {
+            background-image: none;
+            padding-right: 5px;
+        }

@@ -316,19 +316,23 @@ $(document).ready(function() {
         $('#users .rename').hide()
     })
     $('#users li .rename').click(function() {
-        $(this).hide()
-        $(this).nextAll('p, span').hide()
-        $('<input type="text" />').addClass('renamer').appendTo($(this).parent())
-            .val($(this).nextAll('p').text())
+        var el = $(this)
+        el.parent().addClass('renamed')
+        el.hide()
+        el.nextAll('p').hide()
+        $('<input type="text" />').addClass('renamer').appendTo(el.parent())
+            .val(el.nextAll('p').text())
             .keyup(function(e) {
                 if (13 == e.keyCode || 3 == e.keyCode) {
                     $(this).blur()
                 }
             })
             .blur(function() {
-                Preved.user($(this).val())
-                $(this).prevAll('p, span').show()
-                $(this).remove()
+                var el = $(this)
+                el.parent().removeClass('renamed')
+                Preved.user(el.val())
+                el.prevAll('p').show()
+                el.remove()
                 $('#new textarea').focus()
             }).focus()
     })
