@@ -30,8 +30,15 @@ Chat = {
         return $('#messages .author:last').hasClass('user' + id)
     },
     add: function(text) {
-        return $('<li />').html(Chat.format(text)).appendTo('#messages')
+        var messages = $('#messages')[0]
+        var scroll = messages.scrollHeight
+        scroll -= messages.scrollTop + $('#messages').height()
+        
+        var message = $('<li />').html(Chat.format(text)).appendTo('#messages')
             .css('padding-left', Chat.maxName + 10)
+        
+        if (30 > scroll) messages.scrollTop = messages.scrollHeight
+        return message
     },
     author: function(message, user) {
         author = $('<span/>').addClass('author user' + user)
